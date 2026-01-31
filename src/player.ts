@@ -14,6 +14,7 @@ export class Player {
   private isFalling: boolean = false;
   private fallProgress: number = 0;
   private fallSpeed: number = 1.5; // duration in seconds for fall animation
+  private fallingSound: HTMLAudioElement;
 
   constructor(
     gridX: number,
@@ -31,6 +32,10 @@ export class Player {
     this.targetGridY = gridY;
     this.previousGridX = gridX;
     this.previousGridY = gridY;
+
+    // Load falling sound
+    this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
+    this.fallingSound.playbackRate = 2;
   }
 
   update(deltaTime: number): void {
@@ -185,6 +190,10 @@ export class Player {
     this.isFalling = true;
     this.fallProgress = 0;
     this.isMoving = false; // Stop any current movement
+
+    // Play falling sound
+    this.fallingSound.currentTime = 0; // Reset to start in case it was already playing
+    this.fallingSound.play().catch(err => console.error('Error playing falling sound:', err));
   }
 
   isFallingIntoHole(): boolean {

@@ -2,3 +2,6 @@
 
 A pixel art puzzle game starring Nimbus, the LocalStack mascot. Players navigate grid-based levels, pushing data blocks onto the correct service endpoints. Each AWS service introduces a unique mechanic—Step Functions create literal stepping stones, SQS tiles act as queues, Lambda triggers chain reactions. The first world features a warm data center aesthetic based on AWS services. The second world shifts to an icy Snowflake-themed environment with cold storage mechanics and slippery surfaces.
 The goal: route your data correctly, solve the puzzle, and maybe learn a bit about cloud services along the way.
+
+
+Sound Effect by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)
