@@ -1,6 +1,6 @@
 import { Grid } from './grid';
 import { Player } from './player';
-import { Block } from './block';
+import { S3Bucket } from './s3';
 import { Hole } from './hole';
 import { Goal } from './goal';
 import { InputHandler } from './input';
@@ -11,7 +11,7 @@ export class Game {
   private ctx: CanvasRenderingContext2D;
   private grid: Grid;
   private player: Player;
-  private blocks: Block[];
+  private s3Buckets: S3Bucket[];
   private holes: Hole[];
   private goals: Goal[];
   private inputHandler: InputHandler;
@@ -33,7 +33,7 @@ export class Game {
     this.ctx = ctx;
 
     // Initialize with empty arrays (will be populated by loadLevel)
-    this.blocks = [];
+    this.s3Buckets = [];
     this.holes = [];
     this.goals = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
@@ -67,7 +67,7 @@ export class Game {
 
   private update(deltaTime: number): void {
     this.player.update(deltaTime);
-    this.blocks.forEach(block => block.update(deltaTime));
+    this.s3Buckets.forEach(s3Bucket => s3Bucket.update(deltaTime));
     this.checkWinCondition();
     this.checkGameOverCondition();
   }
@@ -80,14 +80,14 @@ export class Game {
     // Render grid
     this.grid.render(this.ctx);
 
-    // Render goals (behind blocks)
+    // Render goals (behind s3Buckets)
     this.goals.forEach(goal => goal.render(this.ctx));
 
     // Render holes
     this.holes.forEach(hole => hole.render(this.ctx));
 
-    // Render blocks
-    this.blocks.forEach(block => block.render(this.ctx));
+    // Render s3Buckets
+    this.s3Buckets.forEach(s3Bucket => s3Bucket.render(this.ctx));
 
     // Render player
     this.player.render(this.ctx);
@@ -112,25 +112,25 @@ export class Game {
       return false;
     }
 
-    // Check if there's a block at the target position
-    const blockAtTarget = this.blocks.find(
-      block => block.getGridX() === newX && block.getGridY() === newY
+    // Check if there's a s3Bucket at the target position
+    const s3BucketAtTarget = this.s3Buckets.find(
+      s3Bucket => s3Bucket.getGridX() === newX && s3Bucket.getGridY() === newY
     );
 
-    if (blockAtTarget) {
+    if (s3BucketAtTarget) {
       // Calculate push direction
       const dx = newX - this.player.getGridX();
       const dy = newY - this.player.getGridY();
 
-      // Try to push the block
-      if (this.tryPushBlock(blockAtTarget, dx, dy)) {
-        // Block was pushed successfully, move player
+      // Try to push the s3Bucket
+      if (this.tryPushs3Bucket(s3BucketAtTarget, dx, dy)) {
+        // s3Bucket was pushed successfully, move player
         this.player.moveTo(newX, newY);
         return true;
       } else {
         this.invalidMoveSound.currentTime = 0;
         this.invalidMoveSound.play();
-        // Block couldn't be pushed, don't move player
+        // s3Bucket couldn't be pushed, don't move player
         return false;
       }
     }
@@ -138,43 +138,43 @@ export class Game {
     this.playerMoveSound.currentTime = 0;
     this.playerMoveSound.play();
 
-    // No block in the way, just move player
+    // No s3Bucket in the way, just move player
     this.player.moveTo(newX, newY);
     return true;
   }
 
-  private tryPushBlock(block: Block, dx: number, dy: number): boolean {
-    // Don't push if block is already moving
-    if (block.isCurrentlyMoving()) {
+  private tryPushs3Bucket(s3Bucket: S3Bucket, dx: number, dy: number): boolean {
+    // Don't push if s3Bucket is already moving
+    if (s3Bucket.isCurrentlyMoving()) {
       return false;
     }
 
-    const newBlockX = block.getGridX() + dx;
-    const newBlockY = block.getGridY() + dy;
+    const news3BucketX = s3Bucket.getGridX() + dx;
+    const news3BucketY = s3Bucket.getGridY() + dy;
 
-    // If the block would go out of bounds player can't push it
+    // If the s3Bucket would go out of bounds player can't push it
     if (
-      newBlockX < 0 ||
-      newBlockX >= this.grid.getWidth() ||
-      newBlockY < 0 ||
-      newBlockY >= this.grid.getHeight()
+      news3BucketX < 0 ||
+      news3BucketX >= this.grid.getWidth() ||
+      news3BucketY < 0 ||
+      news3BucketY >= this.grid.getHeight()
     ) {
       this.invalidMoveSound.currentTime = 0;
       this.invalidMoveSound.play();
       return false;
     }
 
-    // Check if another block is blocking the push
-    const blockingBlock = this.blocks.find(
-      b => b !== block && b.getGridX() === newBlockX && b.getGridY() === newBlockY
+    // Check if another s3Bucket is s3Bucketing the push
+    const s3Bucketings3Bucket = this.s3Buckets.find(
+      b => b !== s3Bucket && b.getGridX() === news3BucketX && b.getGridY() === news3BucketY
     );
 
-    if (blockingBlock) {
-      return false; // Another block is in the way
+    if (s3Bucketings3Bucket) {
+      return false; // Another s3Bucket is in the way
     }
 
-    // Move the block (it will do its own bounds checking)
-    block.moveTo(newBlockX, newBlockY);
+    // Move the s3Bucket (it will do its own bounds checking)
+    s3Bucket.moveTo(news3BucketX, news3BucketY);
     return true;
   }
 
@@ -183,15 +183,16 @@ export class Game {
   }
 
   private checkWinCondition(): void {
-    // Check if all goals have blocks on them
+    // Check if all goals have s3Buckets on them
     let allGoalsCompleted = true;
 
     for (const goal of this.goals) {
-      const blockOnGoal = this.blocks.find(
-        block => block.getGridX() === goal.getGridX() && block.getGridY() === goal.getGridY()
+      const s3BucketOnGoal = this.s3Buckets.find(
+        s3Bucket =>
+          s3Bucket.getGridX() === goal.getGridX() && s3Bucket.getGridY() === goal.getGridY()
       );
 
-      if (blockOnGoal) {
+      if (s3BucketOnGoal) {
         goal.setCompleted(true);
       } else {
         goal.setCompleted(false);
@@ -302,9 +303,9 @@ export class Game {
       levelData.gridHeight
     );
 
-    // Recreate blocks
-    this.blocks = levelData.blocks.map(
-      b => new Block(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
+    // Recreate s3Buckets
+    this.s3Buckets = levelData.s3Buckets.map(
+      b => new S3Bucket(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
     );
 
     // Recreate holes

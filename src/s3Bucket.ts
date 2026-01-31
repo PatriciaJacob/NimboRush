@@ -1,4 +1,4 @@
-export class Block {
+export class S3Bucket {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -82,13 +82,7 @@ export class Block {
 
     // Draw S3 icon if loaded (clipped to rounded rect)
     if (this.iconLoaded) {
-      ctx.drawImage(
-        this.s3Icon,
-        pixelX + padding,
-        pixelY + padding,
-        bodySize,
-        bodySize
-      );
+      ctx.drawImage(this.s3Icon, pixelX + padding, pixelY + padding, bodySize, bodySize);
     }
 
     ctx.restore();
