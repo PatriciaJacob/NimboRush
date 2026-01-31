@@ -119,6 +119,11 @@ export class Game {
     const newBlockX = block.getGridX() + dx;
     const newBlockY = block.getGridY() + dy;
 
+    // If the block would go out of bounds player can't push it
+    if (newBlockX < 0 || newBlockX >= this.grid.getWidth() || newBlockY < 0 || newBlockY >= this.grid.getHeight()) {
+      return false; 
+    }
+
     // Check if another block is blocking the push
     const blockingBlock = this.blocks.find(
       b => b !== block && b.getGridX() === newBlockX && b.getGridY() === newBlockY
