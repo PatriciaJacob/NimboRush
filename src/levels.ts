@@ -5,6 +5,7 @@ export interface LevelData {
   gridHeight: number;
   playerStart: { x: number; y: number };
   blocks: { x: number; y: number }[];
+  holes?: { x: number; y: number }[];
   goals: { x: number; y: number }[];
 }
 
@@ -16,6 +17,7 @@ export const LEVELS: LevelData[] = [
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
     blocks: [{ x: 3, y: 2 }],
+    holes: [{ x: 2, y: 2 }],
     goals: [{ x: 9, y: 3 }],
   },
   {

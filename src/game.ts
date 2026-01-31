@@ -1,6 +1,7 @@
 import { Grid } from './grid';
 import { Player } from './player';
 import { Block } from './block';
+import { Hole } from './hole';
 import { Goal } from './goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
@@ -11,10 +12,12 @@ export class Game {
   private grid: Grid;
   private player: Player;
   private blocks: Block[];
+  private holes: Hole[];
   private goals: Goal[];
   private inputHandler: InputHandler;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
+  private isGameOver: boolean = false;
   private currentLevelIndex: number = 0;
   private tileSize: number = 48;
 
@@ -28,6 +31,7 @@ export class Game {
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.blocks = [];
+    this.holes = [];
     this.goals = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
@@ -56,6 +60,7 @@ export class Game {
     this.player.update(deltaTime);
     this.blocks.forEach(block => block.update(deltaTime));
     this.checkWinCondition();
+    this.checkGameOverCondition();
   }
 
   private render(): void {
@@ -69,6 +74,9 @@ export class Game {
     // Render goals (behind blocks)
     this.goals.forEach(goal => goal.render(this.ctx));
 
+    // Render holes
+    this.holes.forEach(hole => hole.render(this.ctx));
+
     // Render blocks
     this.blocks.forEach(block => block.render(this.ctx));
 
@@ -78,6 +86,10 @@ export class Game {
     // Render win message
     if (this.isGameWon) {
       this.renderWinMessage();
+    }
+
+    if (this.isGameOver) {
+      this.renderGameOverMessage();
     }
   }
 
@@ -173,6 +185,18 @@ export class Game {
     }
   }
 
+  private checkGameOverCondition(): void {
+    const playerInHole = this.holes?.find(
+      hole =>
+        hole.getGridX() === this.player.getGridX() && hole.getGridY() === this.player.getGridY()
+    );
+
+    if (playerInHole && !this.isGameOver) {
+      this.isGameOver = true;
+      console.log('Game over! You ran into a hole!');
+    }
+  }
+
   private renderWinMessage(): void {
     // Semi-transparent overlay
     this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
@@ -203,6 +227,25 @@ export class Game {
         this.canvas.height / 2 + 30
       );
     }
+  }
+
+  private renderGameOverMessage(): void {
+    // Semi-transparent overlay
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Game over message
+    this.ctx.fillStyle = '#cc5b2e';
+    this.ctx.font = 'bold 48px monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('GAME OVER!', this.canvas.width / 2, this.canvas.height / 2 - 30);
+
+    // Subtitle
+    this.ctx.fillStyle = '#ecf0f1';
+    this.ctx.font = '24px monospace';
+
+    this.ctx.fillText('Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
   }
 
   loadLevel(levelIndex: number): void {
@@ -236,6 +279,9 @@ export class Game {
       b => new Block(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
     );
 
+    // Recreate holes
+    this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];
+
     // Recreate goals
     this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize));
 
@@ -243,6 +289,7 @@ export class Game {
   }
 
   restart(): void {
+    this.isGameOver = false;
     // if the game has ended, player passed all levels, reset to first level
     if (this.isGameWon) {
       this.loadLevel(0);
