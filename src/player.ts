@@ -111,7 +111,7 @@ export class Player {
     }
 
     // Draw Nimbo as a simple cloud-like shape
-    ctx.fillStyle = '#3498db'; // Nice blue color for our cloud character
+    ctx.fillStyle = '#665CD2';
 
     // Main body (rounded rectangle)
     const bodySize = this.tileSize - padding * 2;

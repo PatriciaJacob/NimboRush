@@ -12,29 +12,31 @@ export class Hole {
   render(ctx: CanvasRenderingContext2D): void {
     const pixelX = this.gridX * this.tileSize;
     const pixelY = this.gridY * this.tileSize;
-    const padding = 4;
+    const bodySize = this.tileSize;
 
-    ctx.fillStyle = 'purple';
-
-    // Main body (circle)
-    const bodySize = this.tileSize - padding * 2;
-    this.Circle(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize);
+    ctx.fillStyle = '#000000';
+    this.roundRect(ctx, pixelX, pixelY, bodySize, bodySize, 0);
     ctx.fill();
   }
 
-  private Circle(
+  private roundRect(
     ctx: CanvasRenderingContext2D,
     x: number,
     y: number,
     width: number,
-    height: number
+    height: number,
+    radius: number
   ): void {
-    const radius = width / 2;
-    const centerX = x + radius;
-    const centerY = y + radius;
-
     ctx.beginPath();
-    ctx.arc(centerX, centerY, radius, 0, 2 * Math.PI);
+    ctx.moveTo(x + radius, y);
+    ctx.lineTo(x + width - radius, y);
+    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+    ctx.lineTo(x + width, y + height - radius);
+    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+    ctx.lineTo(x + radius, y + height);
+    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+    ctx.lineTo(x, y + radius);
+    ctx.quadraticCurveTo(x, y, x + radius, y);
     ctx.closePath();
   }
 

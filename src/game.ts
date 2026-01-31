@@ -73,8 +73,8 @@ export class Game {
   }
 
   private render(): void {
-    // Clear canvas
-    this.ctx.fillStyle = '#1a1a1a';
+    // Clear canvas with a soft neutral background
+    this.ctx.fillStyle = '#2d2d30';
     this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
     // Render grid

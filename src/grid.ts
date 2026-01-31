@@ -10,8 +10,19 @@ export class Grid {
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // Draw grid lines
-    ctx.strokeStyle = 'red';
+    // Draw checkerboard pattern for better visibility
+    // Light tile color - soft warm gray
+    ctx.fillStyle = '#3e3e42';
+    for (let y = 0; y < this.height; y++) {
+      for (let x = 0; x < this.width; x++) {
+        if ((x + y) % 2 === 0) {
+          ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+        }
+      }
+    }
+
+    // Draw grid lines - subtle borders
+    ctx.strokeStyle = '#1e1e20';
     ctx.lineWidth = 1;
 
     // Vertical lines
@@ -30,16 +41,6 @@ export class Grid {
       ctx.moveTo(0, pixelY);
       ctx.lineTo(this.width * this.tileSize, pixelY);
       ctx.stroke();
-    }
-
-    // Draw checkerboard pattern for better visibility
-    ctx.fillStyle = '#0f0f0f';
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        if ((x + y) % 2 === 0) {
-          ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
-        }
-      }
     }
   }
 
