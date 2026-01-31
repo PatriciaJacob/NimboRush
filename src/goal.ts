@@ -1,13 +1,17 @@
+export type GoalType = 's3bucket' | 'player';
+
 export class Goal {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
   private isCompleted: boolean = false;
+  private type: GoalType;
 
-  constructor(gridX: number, gridY: number, tileSize: number) {
+  constructor(gridX: number, gridY: number, tileSize: number, type: GoalType = 's3bucket') {
     this.gridX = gridX;
     this.gridY = gridY;
     this.tileSize = tileSize;
+    this.type = type;
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -16,15 +20,33 @@ export class Goal {
     const padding = 8;
     const size = this.tileSize - padding * 2;
 
+    // Choose colors based on goal type
+    let fillColor: string;
+    let strokeColor: string;
+    let completedFillColor: string;
+    let completedStrokeColor: string;
+
+    if (this.type === 'player') {
+      // Orange for player goals
+      fillColor = '#ff9500';
+      strokeColor = '#ff7700';
+      completedFillColor = '#ff7700';
+      completedStrokeColor = '#ff5500';
+    } else {
+      // Green for S3 bucket goals
+      fillColor = '#52e085';
+      strokeColor = '#2ecc71';
+      completedFillColor = '#2ecc71';
+      completedStrokeColor = '#27ae60';
+    }
+
     // Draw goal square
     if (this.isCompleted) {
-      // Bright green when completed
-      ctx.fillStyle = '#2ecc71';
-      ctx.strokeStyle = '#27ae60';
+      ctx.fillStyle = completedFillColor;
+      ctx.strokeStyle = completedStrokeColor;
     } else {
-      // Lighter green when not completed
-      ctx.fillStyle = '#52e085';
-      ctx.strokeStyle = '#2ecc71';
+      ctx.fillStyle = fillColor;
+      ctx.strokeStyle = strokeColor;
     }
 
     ctx.fillRect(pixelX + padding, pixelY + padding, size, size);
@@ -32,7 +54,7 @@ export class Goal {
     ctx.strokeRect(pixelX + padding, pixelY + padding, size, size);
 
     // Draw target symbol (circle)
-    ctx.strokeStyle = '#27ae60';
+    ctx.strokeStyle = this.isCompleted ? completedStrokeColor : strokeColor;
     ctx.lineWidth = 2;
 
     const centerX = pixelX + this.tileSize / 2;
@@ -58,5 +80,9 @@ export class Goal {
 
   isComplete(): boolean {
     return this.isCompleted;
+  }
+
+  getType(): GoalType {
+    return this.type;
   }
 }

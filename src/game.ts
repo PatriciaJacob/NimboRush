@@ -183,20 +183,34 @@ export class Game {
   }
 
   private checkWinCondition(): void {
-    // Check if all goals have s3Buckets on them
+    // Check if all goals are completed based on their type
     let allGoalsCompleted = true;
 
     for (const goal of this.goals) {
-      const s3BucketOnGoal = this.s3Buckets.find(
-        s3Bucket =>
-          s3Bucket.getGridX() === goal.getGridX() && s3Bucket.getGridY() === goal.getGridY()
-      );
+      if (goal.getType() === 'player') {
+        // Player goal - check if player is on it
+        const playerOnGoal =
+          this.player.getGridX() === goal.getGridX() && this.player.getGridY() === goal.getGridY();
 
-      if (s3BucketOnGoal) {
-        goal.setCompleted(true);
+        if (playerOnGoal) {
+          goal.setCompleted(true);
+        } else {
+          goal.setCompleted(false);
+          allGoalsCompleted = false;
+        }
       } else {
-        goal.setCompleted(false);
-        allGoalsCompleted = false;
+        // S3 bucket goal - check if an S3 bucket is on it
+        const s3BucketOnGoal = this.s3Buckets.find(
+          s3Bucket =>
+            s3Bucket.getGridX() === goal.getGridX() && s3Bucket.getGridY() === goal.getGridY()
+        );
+
+        if (s3BucketOnGoal) {
+          goal.setCompleted(true);
+        } else {
+          goal.setCompleted(false);
+          allGoalsCompleted = false;
+        }
       }
     }
 
@@ -304,15 +318,16 @@ export class Game {
     );
 
     // Recreate s3Buckets
-    this.s3Buckets = levelData.s3Buckets.map(
-      b => new S3Bucket(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
-    );
+    this.s3Buckets =
+      levelData.s3Buckets?.map(
+        b => new S3Bucket(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
+      ) || [];
 
     // Recreate holes
     this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];
 
     // Recreate goals
-    this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize));
+    this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize, g.type || 's3bucket'));
 
     console.log(`Loaded Level ${levelData.id}: ${levelData.name}`);
   }
