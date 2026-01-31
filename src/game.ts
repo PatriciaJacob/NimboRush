@@ -1,6 +1,6 @@
 import { Grid } from './grid';
 import { Player } from './player';
-import { S3Bucket } from './s3';
+import { S3Bucket } from './s3Bucket';
 import { Hole } from './hole';
 import { Goal } from './goal';
 import { InputHandler } from './input';

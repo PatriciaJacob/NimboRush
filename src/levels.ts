@@ -4,7 +4,7 @@ export interface LevelData {
   gridWidth: number;
   gridHeight: number;
   playerStart: { x: number; y: number };
-  blocks: { x: number; y: number }[];
+  s3Buckets: { x: number; y: number }[];
   holes?: { x: number; y: number }[];
   goals: { x: number; y: number }[];
 }
@@ -16,7 +16,7 @@ export const LEVELS: LevelData[] = [
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
-    blocks: [{ x: 3, y: 2 }],
+    s3Buckets: [{ x: 3, y: 2 }],
     holes: [{ x: 2, y: 2 }],
     goals: [{ x: 9, y: 3 }],
   },
@@ -26,7 +26,7 @@ export const LEVELS: LevelData[] = [
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
-    blocks: [
+    s3Buckets: [
       { x: 3, y: 2 },
       { x: 5, y: 4 },
     ],
@@ -41,7 +41,7 @@ export const LEVELS: LevelData[] = [
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 5 },
-    blocks: [
+    s3Buckets: [
       { x: 4, y: 3 },
       { x: 5, y: 5 },
       { x: 4, y: 7 },

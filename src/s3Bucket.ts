@@ -11,7 +11,7 @@ export class S3Bucket {
   private targetGridY: number;
   private previousGridX: number;
   private previousGridY: number;
-  private blockMoveSound: HTMLAudioElement;
+  private moveSound: HTMLAudioElement;
   private s3Icon: HTMLImageElement;
   private iconLoaded: boolean = false;
 
@@ -31,8 +31,8 @@ export class S3Bucket {
     this.targetGridY = gridY;
     this.previousGridX = gridX;
     this.previousGridY = gridY;
-    this.blockMoveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
-    this.blockMoveSound.playbackRate = 3;
+    this.moveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
+    this.moveSound.playbackRate = 3;
 
     // Load S3 icon
     this.s3Icon = new Image();
@@ -120,8 +120,8 @@ export class S3Bucket {
       return;
     }
 
-    this.blockMoveSound.currentTime = 0;
-    this.blockMoveSound.play();
+    this.moveSound.currentTime = 0;
+    this.moveSound.play();
 
     this.previousGridX = this.gridX;
     this.previousGridY = this.gridY;
