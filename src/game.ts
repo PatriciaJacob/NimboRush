@@ -3,6 +3,7 @@ import { Player } from './player';
 import { Block } from './block';
 import { Goal } from './goal';
 import { InputHandler } from './input';
+import { LEVELS, LevelData } from './levels';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -14,6 +15,8 @@ export class Game {
   private inputHandler: InputHandler;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
+  private currentLevelIndex: number = 0;
+  private tileSize: number = 48;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -23,33 +26,16 @@ export class Game {
     }
     this.ctx = ctx;
 
-    // Game configuration
-    const tileSize = 48;
-    const gridWidth = 12;
-    const gridHeight = 10;
-
-    // Set canvas size
-    this.canvas.width = gridWidth * tileSize;
-    this.canvas.height = gridHeight * tileSize;
-
-    // Initialize game objects
-    this.grid = new Grid(gridWidth, gridHeight, tileSize);
-    this.player = new Player(1, 1, tileSize, gridWidth, gridHeight); // Start at grid position (1, 1)
-
-    // Create some blocks for testing
-    this.blocks = [
-      new Block(3, 2, tileSize, gridWidth, gridHeight),
-      new Block(5, 4, tileSize, gridWidth, gridHeight),
-      new Block(7, 5, tileSize, gridWidth, gridHeight),
-      new Block(4, 7, tileSize, gridWidth, gridHeight),
-    ];
-
-    // Create goal squares
-    this.goals = [
-      new Goal(9, 3, tileSize),
-    ];
+    // Initialize with empty arrays (will be populated by loadLevel)
+    this.blocks = [];
+    this.goals = [];
+    this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
+    this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
     this.inputHandler = new InputHandler(this);
+
+    // Load the first level
+    this.loadLevel(0);
   }
 
   start(): void {
@@ -197,6 +183,74 @@ export class Game {
     // Subtitle
     this.ctx.fillStyle = '#ecf0f1';
     this.ctx.font = '24px monospace';
-    this.ctx.fillText('Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+
+    // Show different message based on if there's a next level
+    if (this.currentLevelIndex < LEVELS.length - 1) {
+      this.ctx.fillText('Press N for next level or R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+    } else {
+      this.ctx.fillText('All levels complete! Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+    }
+  }
+
+  loadLevel(levelIndex: number): void {
+    if (levelIndex < 0 || levelIndex >= LEVELS.length) {
+      console.error('Invalid level index:', levelIndex);
+      return;
+    }
+
+    const levelData = LEVELS[levelIndex];
+    this.currentLevelIndex = levelIndex;
+    this.isGameWon = false;
+
+    // Update canvas size based on level
+    this.canvas.width = levelData.gridWidth * this.tileSize;
+    this.canvas.height = levelData.gridHeight * this.tileSize;
+
+    // Recreate grid
+    this.grid = new Grid(levelData.gridWidth, levelData.gridHeight, this.tileSize);
+
+    // Recreate player
+    this.player = new Player(
+      levelData.playerStart.x,
+      levelData.playerStart.y,
+      this.tileSize,
+      levelData.gridWidth,
+      levelData.gridHeight
+    );
+
+    // Recreate blocks
+    this.blocks = levelData.blocks.map(
+      b => new Block(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
+    );
+
+    // Recreate goals
+    this.goals = levelData.goals.map(
+      g => new Goal(g.x, g.y, this.tileSize)
+    );
+
+    console.log(`Loaded Level ${levelData.id}: ${levelData.name}`);
+  }
+
+  restart(): void {
+    // if the game has ended, player passed all levels, reset to first level
+    if (this.isGameWon) {
+      this.loadLevel(0);
+      return;
+    }
+    // otherwise, restart the current level
+    this.loadLevel(this.currentLevelIndex);
+  }
+
+  nextLevel(): void {
+    // don't let the user to next level if they haven't beaten current level
+    if (!this.isGameWon) {
+      return;
+    }
+
+    if (this.currentLevelIndex < LEVELS.length - 1) {
+      this.loadLevel(this.currentLevelIndex + 1);
+    } else {
+      console.log('No more levels! You beat the game!');
+    }
   }
 }

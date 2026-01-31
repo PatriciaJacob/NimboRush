@@ -45,6 +45,14 @@ export class InputHandler {
       case 'ArrowRight':
         this.game.tryMovePlayer(currentX + 1, currentY);
         break;
+      case 'r':
+      case 'R':
+        this.game.restart();
+        break;
+      case 'n':
+      case 'N':
+        this.game.nextLevel();
+        break;
     }
   }
 
