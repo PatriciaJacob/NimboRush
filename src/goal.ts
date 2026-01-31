@@ -31,18 +31,17 @@ export class Goal {
     ctx.lineWidth = 2;
     ctx.strokeRect(pixelX + padding, pixelY + padding, size, size);
 
-      // Draw target symbol (circle)
-      ctx.strokeStyle = '#27ae60';
-      ctx.lineWidth = 2;
+    // Draw target symbol (circle)
+    ctx.strokeStyle = '#27ae60';
+    ctx.lineWidth = 2;
 
-      const centerX = pixelX + this.tileSize / 2;
-      const centerY = pixelY + this.tileSize / 2;
-      const radius = size / 4;
+    const centerX = pixelX + this.tileSize / 2;
+    const centerY = pixelY + this.tileSize / 2;
+    const radius = size / 4;
 
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
-      ctx.stroke();
-    
+    ctx.beginPath();
+    ctx.arc(centerX, centerY, radius, 0, Math.PI * 2);
+    ctx.stroke();
   }
 
   getGridX(): number {

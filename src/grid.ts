@@ -37,12 +37,7 @@ export class Grid {
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
         if ((x + y) % 2 === 0) {
-          ctx.fillRect(
-            x * this.tileSize,
-            y * this.tileSize,
-            this.tileSize,
-            this.tileSize
-          );
+          ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
         }
       }
     }

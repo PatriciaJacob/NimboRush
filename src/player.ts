@@ -12,7 +12,13 @@ export class Player {
   private previousGridX: number;
   private previousGridY: number;
 
-  constructor(gridX: number, gridY: number, tileSize: number, gridWidth: number, gridHeight: number) {
+  constructor(
+    gridX: number,
+    gridY: number,
+    tileSize: number,
+    gridWidth: number,
+    gridHeight: number
+  ) {
     this.gridX = gridX;
     this.gridY = gridY;
     this.tileSize = tileSize;
@@ -61,14 +67,7 @@ export class Player {
 
     // Main body (rounded rectangle)
     const bodySize = this.tileSize - padding * 2;
-    this.roundRect(
-      ctx,
-      pixelX + padding,
-      pixelY + padding,
-      bodySize,
-      bodySize,
-      8
-    );
+    this.roundRect(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize, 8);
     ctx.fill();
 
     // Add some character details (simple face)
@@ -119,13 +118,12 @@ export class Player {
       return;
     }
 
-      this.previousGridX = this.gridX;
-      this.previousGridY = this.gridY;
-      this.targetGridX = gridX;
-      this.targetGridY = gridY;
-      this.isMoving = true;
-      this.moveProgress = 0;
-    
+    this.previousGridX = this.gridX;
+    this.previousGridY = this.gridY;
+    this.targetGridX = gridX;
+    this.targetGridY = gridY;
+    this.isMoving = true;
+    this.moveProgress = 0;
   }
 
   getGridX(): number {

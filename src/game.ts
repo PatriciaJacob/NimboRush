@@ -123,8 +123,13 @@ export class Game {
     const newBlockY = block.getGridY() + dy;
 
     // If the block would go out of bounds player can't push it
-    if (newBlockX < 0 || newBlockX >= this.grid.getWidth() || newBlockY < 0 || newBlockY >= this.grid.getHeight()) {
-      return false; 
+    if (
+      newBlockX < 0 ||
+      newBlockX >= this.grid.getWidth() ||
+      newBlockY < 0 ||
+      newBlockY >= this.grid.getHeight()
+    ) {
+      return false;
     }
 
     // Check if another block is blocking the push
@@ -186,9 +191,17 @@ export class Game {
 
     // Show different message based on if there's a next level
     if (this.currentLevelIndex < LEVELS.length - 1) {
-      this.ctx.fillText('Press N for next level or R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+      this.ctx.fillText(
+        'Press N for next level or R to restart',
+        this.canvas.width / 2,
+        this.canvas.height / 2 + 30
+      );
     } else {
-      this.ctx.fillText('All levels complete! Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+      this.ctx.fillText(
+        'All levels complete! Press R to restart',
+        this.canvas.width / 2,
+        this.canvas.height / 2 + 30
+      );
     }
   }
 
@@ -224,9 +237,7 @@ export class Game {
     );
 
     // Recreate goals
-    this.goals = levelData.goals.map(
-      g => new Goal(g.x, g.y, this.tileSize)
-    );
+    this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize));
 
     console.log(`Loaded Level ${levelData.id}: ${levelData.name}`);
   }

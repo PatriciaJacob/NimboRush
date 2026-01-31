@@ -11,20 +11,16 @@ export interface LevelData {
 export const LEVELS: LevelData[] = [
   {
     id: 1,
-    name: "First Steps",
+    name: 'First Steps',
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
-    blocks: [
-      { x: 3, y: 2 },
-    ],
-    goals: [
-      { x: 9, y: 3 },
-    ],
+    blocks: [{ x: 3, y: 2 }],
+    goals: [{ x: 9, y: 3 }],
   },
   {
     id: 2,
-    name: "Double Trouble",
+    name: 'Double Trouble',
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
@@ -39,7 +35,7 @@ export const LEVELS: LevelData[] = [
   },
   {
     id: 3,
-    name: "The Puzzle",
+    name: 'The Puzzle',
     gridWidth: 12,
     gridHeight: 10,
     playerStart: { x: 1, y: 5 },
