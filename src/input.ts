@@ -1,11 +1,11 @@
-import { Player } from './player';
+import { Game } from './game';
 
 export class InputHandler {
-  private player: Player;
+  private game: Game;
   private keysPressed: Set<string> = new Set();
 
-  constructor(player: Player) {
-    this.player = player;
+  constructor(game: Game) {
+    this.game = game;
     this.setupEventListeners();
   }
 
@@ -27,26 +27,23 @@ export class InputHandler {
 
     this.keysPressed.add(event.key);
 
-    // Only move if player is not currently moving
-    if (this.player.isCurrentlyMoving()) {
-      return;
-    }
-
-    const currentX = this.player.getGridX();
-    const currentY = this.player.getGridY();
+    // Get player position from game
+    const player = this.game.getPlayer();
+    const currentX = player.getGridX();
+    const currentY = player.getGridY();
 
     switch (event.key) {
       case 'ArrowUp':
-        this.player.moveTo(currentX, currentY - 1);
+        this.game.tryMovePlayer(currentX, currentY - 1);
         break;
       case 'ArrowDown':
-        this.player.moveTo(currentX, currentY + 1);
+        this.game.tryMovePlayer(currentX, currentY + 1);
         break;
       case 'ArrowLeft':
-        this.player.moveTo(currentX - 1, currentY);
+        this.game.tryMovePlayer(currentX - 1, currentY);
         break;
       case 'ArrowRight':
-        this.player.moveTo(currentX + 1, currentY);
+        this.game.tryMovePlayer(currentX + 1, currentY);
         break;
     }
   }
