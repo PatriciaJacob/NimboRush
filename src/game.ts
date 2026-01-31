@@ -94,6 +94,10 @@ export class Game {
   }
 
   tryMovePlayer(newX: number, newY: number): boolean {
+    if (this.isGameOver || this.isGameWon) {
+      return false;
+    }
+
     // Don't allow movement if player is already moving
     if (this.player.isCurrentlyMoving()) {
       return false;
