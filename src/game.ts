@@ -1,6 +1,7 @@
 import { Grid } from './grid';
 import { Player } from './player';
 import { Block } from './block';
+import { Goal } from './goal';
 import { InputHandler } from './input';
 
 export class Game {
@@ -9,8 +10,10 @@ export class Game {
   private grid: Grid;
   private player: Player;
   private blocks: Block[];
+  private goals: Goal[];
   private inputHandler: InputHandler;
   private lastFrameTime: number = 0;
+  private isGameWon: boolean = false;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -41,6 +44,11 @@ export class Game {
       new Block(4, 7, tileSize, gridWidth, gridHeight),
     ];
 
+    // Create goal squares
+    this.goals = [
+      new Goal(9, 3, tileSize),
+    ];
+
     this.inputHandler = new InputHandler(this);
   }
 
@@ -61,6 +69,7 @@ export class Game {
   private update(deltaTime: number): void {
     this.player.update(deltaTime);
     this.blocks.forEach(block => block.update(deltaTime));
+    this.checkWinCondition();
   }
 
   private render(): void {
@@ -71,11 +80,19 @@ export class Game {
     // Render grid
     this.grid.render(this.ctx);
 
+    // Render goals (behind blocks)
+    this.goals.forEach(goal => goal.render(this.ctx));
+
     // Render blocks
     this.blocks.forEach(block => block.render(this.ctx));
 
     // Render player
     this.player.render(this.ctx);
+
+    // Render win message
+    if (this.isGameWon) {
+      this.renderWinMessage();
+    }
   }
 
   tryMovePlayer(newX: number, newY: number): boolean {
@@ -140,5 +157,46 @@ export class Game {
 
   getPlayer(): Player {
     return this.player;
+  }
+
+  private checkWinCondition(): void {
+    // Check if all goals have blocks on them
+    let allGoalsCompleted = true;
+
+    for (const goal of this.goals) {
+      const blockOnGoal = this.blocks.find(
+        block => block.getGridX() === goal.getGridX() && block.getGridY() === goal.getGridY()
+      );
+
+      if (blockOnGoal) {
+        goal.setCompleted(true);
+      } else {
+        goal.setCompleted(false);
+        allGoalsCompleted = false;
+      }
+    }
+
+    if (allGoalsCompleted && !this.isGameWon) {
+      this.isGameWon = true;
+      console.log('🎉 You won!');
+    }
+  }
+
+  private renderWinMessage(): void {
+    // Semi-transparent overlay
+    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+    // Win message
+    this.ctx.fillStyle = '#2ecc71';
+    this.ctx.font = 'bold 48px monospace';
+    this.ctx.textAlign = 'center';
+    this.ctx.textBaseline = 'middle';
+    this.ctx.fillText('YOU WIN!', this.canvas.width / 2, this.canvas.height / 2 - 30);
+
+    // Subtitle
+    this.ctx.fillStyle = '#ecf0f1';
+    this.ctx.font = '24px monospace';
+    this.ctx.fillText('Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
   }
 }
