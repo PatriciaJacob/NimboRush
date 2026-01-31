@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NimboRush</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background-color: #2c3e50;
+            font-family: monospace;
+        }
+        #game-container {
+            text-align: center;
+        }
+        canvas {
+            border: 3px solid #34495e;
+            background-color: #1a1a1a;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        h1 {
+            color: #ecf0f1;
+            margin-bottom: 10px;
+        }
+        .info {
+            color: #95a5a6;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>NimboRush</h1>
+        <canvas id="game-canvas"></canvas>
+        <div class="info">Use arrow keys to move Nimbo</div>
+    </div>
+    <script type="module" src="/src/index.ts"></script>
+</body>
+</html>

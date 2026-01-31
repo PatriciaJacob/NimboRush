@@ -1,2 +1,3 @@
 # NimboRush
-Puzzle game with Nimbo
+A pixel art puzzle game starring Nimbus, the LocalStack mascot. Players navigate grid-based levels, pushing data blocks onto the correct service endpoints. Each AWS service introduces a unique mechanic—Step Functions create literal stepping stones, SQS tiles act as queues, Lambda triggers chain reactions. The first world features a warm data center aesthetic based on AWS services. The second world shifts to an icy Snowflake-themed environment with cold storage mechanics and slippery surfaces.
+The goal: route your data correctly, solve the puzzle, and maybe learn a bit about cloud services along the way.

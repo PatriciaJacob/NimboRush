@@ -1,0 +1,23 @@
+{
+  "name": "nimborush",
+  "version": "1.0.0",
+  "description": "A pixel art puzzle game starring Nimbus",
+  "main": "dist/index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [
+    "game",
+    "puzzle",
+    "canvas"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "typescript": "^5.3.3",
+    "vite": "^7.3.1"
+  }
+}
