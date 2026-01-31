@@ -15,6 +15,8 @@ export class Player {
   private fallProgress: number = 0;
   private fallSpeed: number = 1.5; // duration in seconds for fall animation
   private fallingSound: HTMLAudioElement;
+  private invalidMoveSound: HTMLAudioElement;
+  private playerMoveSound: HTMLAudioElement;
 
   constructor(
     gridX: number,
@@ -36,6 +38,7 @@ export class Player {
     // Load falling sound
     this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
     this.fallingSound.playbackRate = 2;
+    this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
   }
 
   update(deltaTime: number): void {
@@ -163,6 +166,8 @@ export class Player {
 
     // Check if target position is within grid bounds if not, do not move
     if (gridX < 0 || gridX >= this.gridWidth || gridY < 0 || gridY >= this.gridHeight) {
+      this.invalidMoveSound.currentTime = 0; // Reset to start in case it was already playing
+      this.invalidMoveSound.play();
       return;
     }
 

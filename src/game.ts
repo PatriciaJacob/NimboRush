@@ -20,6 +20,9 @@ export class Game {
   private isGameOver: boolean = false;
   private currentLevelIndex: number = 0;
   private tileSize: number = 48;
+  private levelCompleteSound: HTMLAudioElement;
+  private invalidMoveSound: HTMLAudioElement;
+  private playerMoveSound: HTMLAudioElement;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -35,6 +38,12 @@ export class Game {
     this.goals = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
+
+    // Load sounds
+    this.levelCompleteSound = new Audio('src/sounds/correct_answer_toy_bi-bling-476370.mp3');
+    this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
+    this.playerMoveSound = new Audio('src/sounds/snow-step-1-81064.mp3');
+    this.playerMoveSound.playbackRate = 2;
 
     this.inputHandler = new InputHandler(this);
 
@@ -119,10 +128,15 @@ export class Game {
         this.player.moveTo(newX, newY);
         return true;
       } else {
+        this.invalidMoveSound.currentTime = 0;
+        this.invalidMoveSound.play();
         // Block couldn't be pushed, don't move player
         return false;
       }
     }
+
+    this.playerMoveSound.currentTime = 0;
+    this.playerMoveSound.play();
 
     // No block in the way, just move player
     this.player.moveTo(newX, newY);
@@ -145,6 +159,8 @@ export class Game {
       newBlockY < 0 ||
       newBlockY >= this.grid.getHeight()
     ) {
+      this.invalidMoveSound.currentTime = 0;
+      this.invalidMoveSound.play();
       return false;
     }
 
@@ -184,6 +200,8 @@ export class Game {
     }
 
     if (allGoalsCompleted && !this.isGameWon) {
+      this.levelCompleteSound.currentTime = 0;
+      this.levelCompleteSound.play();
       this.isGameWon = true;
       console.log('🎉 You won!');
     }

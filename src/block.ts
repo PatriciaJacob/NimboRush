@@ -11,6 +11,7 @@ export class Block {
   private targetGridY: number;
   private previousGridX: number;
   private previousGridY: number;
+  private blockMoveSound: HTMLAudioElement;
 
   constructor(
     gridX: number,
@@ -28,6 +29,8 @@ export class Block {
     this.targetGridY = gridY;
     this.previousGridX = gridX;
     this.previousGridY = gridY;
+    this.blockMoveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
+    this.blockMoveSound.playbackRate = 3;
   }
 
   update(deltaTime: number): void {
@@ -101,6 +104,9 @@ export class Block {
     if (gridX < 0 || gridX >= this.gridWidth || gridY < 0 || gridY >= this.gridHeight) {
       return;
     }
+
+    this.blockMoveSound.currentTime = 0;
+    this.blockMoveSound.play();
 
     this.previousGridX = this.gridX;
     this.previousGridY = this.gridY;
