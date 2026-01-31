@@ -12,6 +12,8 @@ export class Block {
   private previousGridX: number;
   private previousGridY: number;
   private blockMoveSound: HTMLAudioElement;
+  private s3Icon: HTMLImageElement;
+  private iconLoaded: boolean = false;
 
   constructor(
     gridX: number,
@@ -31,6 +33,13 @@ export class Block {
     this.previousGridY = gridY;
     this.blockMoveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
     this.blockMoveSound.playbackRate = 3;
+
+    // Load S3 icon
+    this.s3Icon = new Image();
+    this.s3Icon.onload = () => {
+      this.iconLoaded = true;
+    };
+    this.s3Icon.src = 'src/icons/s3.svg';
   }
 
   update(deltaTime: number): void {
@@ -64,13 +73,25 @@ export class Block {
     const pixelX = renderX * this.tileSize;
     const pixelY = renderY * this.tileSize;
     const padding = 4;
-
-    ctx.fillStyle = 'orange';
-
-    // Main body (rounded rectangle)
     const bodySize = this.tileSize - padding * 2;
+
+    // Create clipping path for rounded rectangle
+    ctx.save();
     this.roundRect(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize, 8);
-    ctx.fill();
+    ctx.clip();
+
+    // Draw S3 icon if loaded (clipped to rounded rect)
+    if (this.iconLoaded) {
+      ctx.drawImage(
+        this.s3Icon,
+        pixelX + padding,
+        pixelY + padding,
+        bodySize,
+        bodySize
+      );
+    }
+
+    ctx.restore();
   }
 
   private roundRect(
