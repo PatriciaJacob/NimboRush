@@ -195,9 +195,15 @@ export class Game {
         hole.getGridX() === this.player.getGridX() && hole.getGridY() === this.player.getGridY()
     );
 
-    if (playerInHole && !this.isGameOver) {
-      this.isGameOver = true;
-      console.log('Game over! You ran into a hole!');
+    if (playerInHole && !this.isGameOver && !this.player.isFallingIntoHole()) {
+      // Start the falling animation
+      this.player.startFalling();
+
+      // Delay game over until animation completes (2.5 seconds)
+      setTimeout(() => {
+        this.isGameOver = true;
+        console.log('Game over! You ran into a hole!');
+      }, 1500);
     }
   }
 
