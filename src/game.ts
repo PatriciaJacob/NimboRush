@@ -26,6 +26,7 @@ export class Game {
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
   private messageSubtitle: HTMLElement;
+  private levelText: HTMLElement;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -39,6 +40,7 @@ export class Game {
     this.messageOverlay = document.getElementById('message-overlay')!;
     this.messageTitle = document.getElementById('message-title')!;
     this.messageSubtitle = document.getElementById('message-subtitle')!;
+    this.levelText = document.getElementById('level-text')!;
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.s3Buckets = [];
@@ -242,13 +244,14 @@ export class Game {
   }
 
   private showWinMessage(): void {
-    this.messageTitle.textContent = 'YOU WIN!';
     this.messageTitle.className = 'message-title win';
 
     // Show different message based on if there's a next level
     if (this.currentLevelIndex < LEVELS.length - 1) {
+      this.messageTitle.textContent = 'LEVEL COMPLETE!';
       this.messageSubtitle.textContent = 'Press N for next level or R to restart';
     } else {
+      this.messageTitle.textContent = 'YOU WIN!';
       this.messageSubtitle.textContent = 'All levels complete! Press R to restart';
     }
 
@@ -304,6 +307,9 @@ export class Game {
 
     // Recreate goals
     this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize, g.type || 's3bucket'));
+
+    // Update level text
+    this.levelText.textContent = levelData.levelText || '';
 
     console.log(`Loaded Level ${levelData.id}: ${levelData.name}`);
   }

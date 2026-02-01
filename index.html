@@ -26,11 +26,29 @@
       }
       h1 {
         color: #ecf0f1;
-        margin-bottom: 10px;
+        margin-bottom: 15px;
+      }
+      #level-text {
+        background-color: #3b536b;
+        color: #ecf0f1;
+        padding: 12px 20px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+        max-width: 500px;
+        margin-left: auto;
+        margin-right: auto;
+        font-size: 14px;
+        line-height: 1.5;
+        border: 2px solid #2c3e50;
+        min-height: 20px;
+      }
+      #level-text:empty {
+        display: none;
       }
       .info {
         color: #95a5a6;
         margin-top: 10px;
+        font-size: 13px;
       }
       #message-overlay {
         display: none;
@@ -80,6 +98,7 @@
     </div>
     <div id="game-container">
       <h1>NimboRush</h1>
+      <h3 id="level-text"></h3>
       <canvas id="game-canvas"></canvas>
       <div class="info">Use arrow keys to move Nimbo</div>
       <div class="info">Press 'r' to restart the level</div>
