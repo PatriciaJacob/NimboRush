@@ -23,6 +23,9 @@ export class Game {
   private levelCompleteSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private playerMoveSound: HTMLAudioElement;
+  private messageOverlay: HTMLElement;
+  private messageTitle: HTMLElement;
+  private messageSubtitle: HTMLElement;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -31,6 +34,11 @@ export class Game {
       throw new Error('Could not get 2D context');
     }
     this.ctx = ctx;
+
+    // Get message overlay elements
+    this.messageOverlay = document.getElementById('message-overlay')!;
+    this.messageTitle = document.getElementById('message-title')!;
+    this.messageSubtitle = document.getElementById('message-subtitle')!;
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.s3Buckets = [];
@@ -91,15 +99,6 @@ export class Game {
 
     // Render player
     this.player.render(this.ctx);
-
-    // Render win message
-    if (this.isGameWon) {
-      this.renderWinMessage();
-    }
-
-    if (this.isGameOver) {
-      this.renderGameOverMessage();
-    }
   }
 
   tryMovePlayer(newX: number, newY: number): boolean {
@@ -218,6 +217,7 @@ export class Game {
       this.levelCompleteSound.currentTime = 0;
       this.levelCompleteSound.play();
       this.isGameWon = true;
+      this.showWinMessage();
       console.log('🎉 You won!');
     }
   }
@@ -235,60 +235,36 @@ export class Game {
       // Delay game over until animation completes (2.5 seconds)
       setTimeout(() => {
         this.isGameOver = true;
+        this.showGameOverMessage();
         console.log('Game over! You ran into a hole!');
       }, 1500);
     }
   }
 
-  private renderWinMessage(): void {
-    // Semi-transparent overlay
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
-
-    // Win message
-    this.ctx.fillStyle = '#2ecc71';
-    this.ctx.font = 'bold 48px monospace';
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('YOU WIN!', this.canvas.width / 2, this.canvas.height / 2 - 30);
-
-    // Subtitle
-    this.ctx.fillStyle = '#ecf0f1';
-    this.ctx.font = '24px monospace';
+  private showWinMessage(): void {
+    this.messageTitle.textContent = 'YOU WIN!';
+    this.messageTitle.className = 'message-title win';
 
     // Show different message based on if there's a next level
     if (this.currentLevelIndex < LEVELS.length - 1) {
-      this.ctx.fillText(
-        'Press N for next level or R to restart',
-        this.canvas.width / 2,
-        this.canvas.height / 2 + 30
-      );
+      this.messageSubtitle.textContent = 'Press N for next level or R to restart';
     } else {
-      this.ctx.fillText(
-        'All levels complete! Press R to restart',
-        this.canvas.width / 2,
-        this.canvas.height / 2 + 30
-      );
+      this.messageSubtitle.textContent = 'All levels complete! Press R to restart';
     }
+
+    this.messageOverlay.classList.add('show');
   }
 
-  private renderGameOverMessage(): void {
-    // Semi-transparent overlay
-    this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
-    this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+  private showGameOverMessage(): void {
+    this.messageTitle.textContent = 'GAME OVER!';
+    this.messageTitle.className = 'message-title game-over';
+    this.messageSubtitle.textContent = 'Press R to restart';
 
-    // Game over message
-    this.ctx.fillStyle = '#cc5b2e';
-    this.ctx.font = 'bold 48px monospace';
-    this.ctx.textAlign = 'center';
-    this.ctx.textBaseline = 'middle';
-    this.ctx.fillText('GAME OVER!', this.canvas.width / 2, this.canvas.height / 2 - 30);
+    this.messageOverlay.classList.add('show');
+  }
 
-    // Subtitle
-    this.ctx.fillStyle = '#ecf0f1';
-    this.ctx.font = '24px monospace';
-
-    this.ctx.fillText('Press R to restart', this.canvas.width / 2, this.canvas.height / 2 + 30);
+  private hideMessage(): void {
+    this.messageOverlay.classList.remove('show');
   }
 
   loadLevel(levelIndex: number): void {
@@ -333,6 +309,7 @@ export class Game {
   }
 
   restart(): void {
+    this.hideMessage();
     this.isGameOver = false;
     // if the game has ended, player passed all levels, reset to first level
     if (this.isGameWon) {
@@ -348,6 +325,8 @@ export class Game {
     if (!this.isGameWon) {
       return;
     }
+
+    this.hideMessage();
 
     if (this.currentLevelIndex < LEVELS.length - 1) {
       this.loadLevel(this.currentLevelIndex + 1);

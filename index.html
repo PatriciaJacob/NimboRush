@@ -32,9 +32,52 @@
         color: #95a5a6;
         margin-top: 10px;
       }
+      #message-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.8);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+      #message-overlay.show {
+        display: flex;
+      }
+      .message-content {
+        background-color: #34495e;
+        padding: 40px 60px;
+        border-radius: 10px;
+        text-align: center;
+        border: 3px solid #2c3e50;
+      }
+      .message-title {
+        font-size: 48px;
+        font-weight: bold;
+        margin-bottom: 20px;
+      }
+      .message-title.win {
+        color: #2ecc71;
+      }
+      .message-title.game-over {
+        color: #cc5b2e;
+      }
+      .message-subtitle {
+        font-size: 20px;
+        color: #ecf0f1;
+      }
     </style>
   </head>
   <body>
+    <div id="message-overlay">
+      <div class="message-content">
+        <div class="message-title" id="message-title"></div>
+        <div class="message-subtitle" id="message-subtitle"></div>
+      </div>
+    </div>
     <div id="game-container">
       <h1>NimboRush</h1>
       <canvas id="game-canvas"></canvas>
