@@ -186,6 +186,17 @@ export class Game {
     const news3BucketX = s3Bucket.getGridX() + dx;
     const news3BucketY = s3Bucket.getGridY() + dy;
 
+    // If the s3Bucket would go through a wall player can't push it
+    const wallAtTarget = this.walls.find(
+      wall => wall.getGridX() === news3BucketX && wall.getGridY() === news3BucketY
+    );
+
+    if (wallAtTarget) {
+      this.invalidMoveSound.currentTime = 0;
+      this.invalidMoveSound.play();
+      return false;
+    }
+
     // If the s3Bucket would go out of bounds player can't push it
     if (
       news3BucketX < 0 ||
