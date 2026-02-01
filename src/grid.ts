@@ -42,6 +42,25 @@ export class Grid {
       ctx.lineTo(this.width * this.tileSize, pixelY);
       ctx.stroke();
     }
+
+    // Draw coordinate numbers
+    ctx.fillStyle = '#888888';
+    ctx.font = '10px monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+
+    // Draw X coordinates (column numbers) at top
+    for (let x = 0; x < this.width; x++) {
+      const pixelX = x * this.tileSize + this.tileSize / 2;
+      ctx.fillText(x.toString(), pixelX, 8);
+    }
+
+    // Draw Y coordinates (row numbers) on left
+    ctx.textAlign = 'left';
+    for (let y = 0; y < this.height; y++) {
+      const pixelY = y * this.tileSize + this.tileSize / 2;
+      ctx.fillText(y.toString(), 2, pixelY);
+    }
   }
 
   getWidth(): number {
