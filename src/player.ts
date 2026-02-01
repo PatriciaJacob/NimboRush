@@ -1,4 +1,6 @@
-export class Player {
+import { Entity, EntityType } from './entity';
+
+export class Player implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -16,7 +18,6 @@ export class Player {
   private fallSpeed: number = 1.5; // duration in seconds for fall animation
   private fallingSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
-  private playerMoveSound: HTMLAudioElement;
   private filesCollected: number = 0;
 
   constructor(
@@ -224,5 +225,14 @@ export class Player {
 
   hasFiles(): boolean {
     return this.filesCollected > 0;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.PLAYER;
+  }
+
+  blocksMovement(): boolean {
+    return false; // Player doesn't block other entities
   }
 }

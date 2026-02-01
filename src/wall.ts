@@ -1,4 +1,6 @@
-export class Wall {
+import { Entity, EntityType } from './entity';
+
+export class Wall implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -58,5 +60,14 @@ export class Wall {
 
   getGridY(): number {
     return this.gridY;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.WALL;
+  }
+
+  blocksMovement(): boolean {
+    return true; // Walls always block movement
   }
 }

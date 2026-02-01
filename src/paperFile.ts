@@ -1,4 +1,6 @@
-export class PaperFile {
+import { Entity, EntityType } from './entity';
+
+export class PaperFile implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -58,5 +60,21 @@ export class PaperFile {
 
   getGridY(): number {
     return this.gridY;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.PAPER_FILE;
+  }
+
+  blocksMovement(): boolean {
+    return true; // Files don't block movement
+  }
+
+  onPlayerEnter(): boolean {
+    if (!this.isConsumed) {
+      this.consume();
+    }
+    return true; // Allow movement
   }
 }

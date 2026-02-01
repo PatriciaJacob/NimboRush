@@ -1,4 +1,6 @@
-export class SteppingStone {
+import { Entity, EntityType } from './entity';
+
+export class SteppingStone implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -126,5 +128,14 @@ export class SteppingStone {
   isSolid(): boolean {
     // Stone becomes solid when fully grown
     return this.isFullyGrown();
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.STEPPING_STONE;
+  }
+
+  blocksMovement(): boolean {
+    return false;
   }
 }

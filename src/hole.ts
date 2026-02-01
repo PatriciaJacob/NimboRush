@@ -1,4 +1,6 @@
-export class Hole {
+import { Entity, EntityType } from './entity';
+
+export class Hole implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -46,5 +48,14 @@ export class Hole {
 
   getGridY(): number {
     return this.gridY;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.HOLE;
+  }
+
+  blocksMovement(): boolean {
+    return false; // Holes don't block movement (but cause falling)
   }
 }

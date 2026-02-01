@@ -1,4 +1,6 @@
-export class S3Bucket {
+import { Entity, EntityType } from './entity';
+
+export class S3Bucket implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -297,7 +299,14 @@ export class S3Bucket {
   startFalling(): void {
     this.isFalling = true;
     this.fallProgress = 0;
-    this.isMoving = false; // Stop any current movement
+
+    // If we were moving, complete the movement immediately before falling
+    if (this.isMoving) {
+      this.gridX = this.targetGridX;
+      this.gridY = this.targetGridY;
+      this.isMoving = false;
+      this.moveProgress = 0;
+    }
 
     // Play falling sound
     this.fallingSound.currentTime = 0; // Reset to start in case it was already playing
@@ -306,5 +315,19 @@ export class S3Bucket {
 
   isFallingIntoHole(): boolean {
     return this.isFalling;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.S3_BUCKET;
+  }
+
+  blocksMovement(): boolean {
+    return true; // S3 buckets block movement (require push)
+  }
+
+  canBePushed(): boolean {
+    // Can only be pushed when full and not currently moving
+    return this.isFull() && !this.isMoving;
   }
 }

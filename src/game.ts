@@ -10,6 +10,8 @@ import { StepFunctions } from './stepFunctions';
 import { SteppingStone } from './steppingStone';
 import { PaperFile } from './paperFile';
 import { Inventory } from './inventory';
+import { CollisionManager } from './collisionManager';
+import { EntityType } from './entity';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -25,6 +27,7 @@ export class Game {
   private walls: Wall[];
   private files: PaperFile[];
   private inputHandler: InputHandler;
+  private collisionManager: CollisionManager;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
   private isGameOver: boolean = false;
@@ -69,6 +72,9 @@ export class Game {
     this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
     this.playerMoveSound = new Audio('src/sounds/snow-step-1-81064.mp3');
     this.playerMoveSound.playbackRate = 2;
+
+    // Initialize collision manager
+    this.collisionManager = new CollisionManager();
 
     this.inputHandler = new InputHandler(this);
 
@@ -144,73 +150,81 @@ export class Game {
       return false;
     }
 
-    const wallAtTarget = this.walls.find(
-      wall => wall.getGridX() === newX && wall.getGridY() === newY
-    );
+    // Use collision manager to check if player can move
+    const moveCheck = this.collisionManager.canPlayerMoveTo(this.player, newX, newY);
 
-    if (wallAtTarget) {
+    if (!moveCheck.canMove) {
+      // Handle different rejection reasons
+      if (moveCheck.reason === 'wall') {
+        this.invalidMoveSound.currentTime = 0;
+        this.invalidMoveSound.play();
+        return false;
+      }
+
+      if (moveCheck.reason === 'deposit_file' && moveCheck.needsPush) {
+        // Deposit a file into the bucket
+        const bucket = moveCheck.needsPush as S3Bucket;
+        if (this.player.depositFile()) {
+          bucket.addFile();
+        }
+        return false; // Don't move player when depositing
+      }
+
+      if (moveCheck.reason === 'push_bucket' && moveCheck.needsPush) {
+        // Try to push the bucket
+        const bucket = moveCheck.needsPush as S3Bucket;
+        const dx = newX - this.player.getGridX();
+        const dy = newY - this.player.getGridY();
+
+        if (this.tryPushs3Bucket(bucket, dx, dy)) {
+          // Bucket was pushed successfully, move player
+          this.player.moveTo(newX, newY);
+          return true;
+        } else {
+          this.invalidMoveSound.currentTime = 0;
+          this.invalidMoveSound.play();
+          return false;
+        }
+      }
+
+      if (moveCheck.reason === 'unpushable_bucket') {
+        this.invalidMoveSound.currentTime = 0;
+        this.invalidMoveSound.play();
+        return false;
+      }
+
+      // Other blocking reasons
       this.invalidMoveSound.currentTime = 0;
       this.invalidMoveSound.play();
       return false;
     }
 
-    // Check if there's a s3Bucket at the target position
-    const s3BucketAtTarget = this.s3Buckets.find(
-      s3Bucket => s3Bucket.getGridX() === newX && s3Bucket.getGridY() === newY
-    );
-
-    if (s3BucketAtTarget) {
-      // Calculate push direction
-      const dx = newX - this.player.getGridX();
-      const dy = newY - this.player.getGridY();
-
-      // Check if player has files and bucket needs them
-      if (this.player.hasFiles() && !s3BucketAtTarget.isFull()) {
-        // Deposit a file into the bucket
-        if (this.player.depositFile()) {
-          s3BucketAtTarget.addFile();
-        }
-        return false; // Don't move player when depositing
-      }
-
-      // Try to push the s3Bucket
-      if (this.tryPushs3Bucket(s3BucketAtTarget, dx, dy)) {
-        // s3Bucket was pushed successfully, move player
-        this.player.moveTo(newX, newY);
-        return true;
-      } else {
-        this.invalidMoveSound.currentTime = 0;
-        this.invalidMoveSound.play();
-        // s3Bucket couldn't be pushed, don't move player
-        return false;
-      }
-    }
-
+    // Movement is allowed - play sound and handle interactions
     this.playerMoveSound.currentTime = 0;
     this.playerMoveSound.play();
 
-    const stepFunctionAtTarget = this.stepFunctions.find(
-      stepFunction => stepFunction.getGridX() === newX && stepFunction.getGridY() === newY
+    // Check for step functions to activate
+    const stepFunctionAtTarget = this.collisionManager.getEntityAt<StepFunctions>(
+      newX,
+      newY,
+      EntityType.STEP_FUNCTIONS
     );
 
     if (stepFunctionAtTarget && stepFunctionAtTarget.isConsumable()) {
       stepFunctionAtTarget.consume();
-
-      // Activate all stepping stones over holes
+      // Activate all stepping stones
       this.steppingStones.forEach(stone => stone.activate());
     }
 
-    // Check if there's a file at the target position and collect it
-    const fileAtTarget = this.files.find(
-      file => file.getGridX() === newX && file.getGridY() === newY
-    );
+    // Check for files to collect
+    const fileAtTarget = this.collisionManager.getEntityAt<PaperFile>(newX, newY, EntityType.PAPER_FILE);
 
     if (fileAtTarget && fileAtTarget.isConsumable()) {
       fileAtTarget.consume();
       this.player.collectFile();
     }
 
-    // No s3Bucket in the way, just move player
+    // Move player
     this.player.moveTo(newX, newY);
     return true;
   }
@@ -228,18 +242,7 @@ export class Game {
     const news3BucketX = s3Bucket.getGridX() + dx;
     const news3BucketY = s3Bucket.getGridY() + dy;
 
-    // If the s3Bucket would go through a wall player can't push it
-    const wallAtTarget = this.walls.find(
-      wall => wall.getGridX() === news3BucketX && wall.getGridY() === news3BucketY
-    );
-
-    if (wallAtTarget) {
-      this.invalidMoveSound.currentTime = 0;
-      this.invalidMoveSound.play();
-      return false;
-    }
-
-    // If the s3Bucket would go out of bounds player can't push it
+    // Check bounds
     if (
       news3BucketX < 0 ||
       news3BucketX >= this.grid.getWidth() ||
@@ -251,40 +254,23 @@ export class Game {
       return false;
     }
 
-    // Check if another s3Bucket is s3Bucketing the push
-    const s3Bucketings3Bucket = this.s3Buckets.find(
-      b => b !== s3Bucket && b.getGridX() === news3BucketX && b.getGridY() === news3BucketY
-    );
-
-    if (s3Bucketings3Bucket) {
-      return false; // Another s3Bucket is in the way
+    // Use collision manager to check if bucket can be pushed to new position
+    if (!this.collisionManager.canPushEntityTo(s3Bucket, news3BucketX, news3BucketY)) {
+      this.invalidMoveSound.currentTime = 0;
+      this.invalidMoveSound.play();
+      return false;
     }
 
-    // Move the s3Bucket (it will do its own bounds checking)
+    // Move the bucket
     s3Bucket.moveTo(news3BucketX, news3BucketY);
 
-    // Check if the new position has a hole
-    const holeAtTarget = this.holes.find(
-      hole => hole.getGridX() === news3BucketX && hole.getGridY() === news3BucketY
-    );
-
-    if (holeAtTarget) {
-      // Check if there's a solid stepping stone covering this hole
-      const steppingStoneAtHole = this.steppingStones.find(
-        stone =>
-          stone.getGridX() === news3BucketX &&
-          stone.getGridY() === news3BucketY &&
-          stone.isSolid()
-      );
-
-      // If there's no stepping stone, schedule the bucket to fall after movement completes
-      if (!steppingStoneAtHole) {
-        // Calculate approximate movement duration based on move speed (8 tiles per second)
-        const movementDuration = (1 / 8) * 1000; // ~125ms
-        setTimeout(() => {
-          s3Bucket.startFalling();
-        }, movementDuration);
-      }
+    // Check if the bucket would fall into a hole
+    if (this.collisionManager.wouldFallIntoHole(news3BucketX, news3BucketY)) {
+      // Calculate approximate movement duration based on move speed (8 tiles per second)
+      const movementDuration = (1 / 8) * 1000; // ~125ms
+      setTimeout(() => {
+        s3Bucket.startFalling();
+      }, movementDuration);
     }
 
     return true;
@@ -336,32 +322,24 @@ export class Game {
   }
 
   private checkGameOverCondition(): void {
-    const playerInHole = this.holes?.find(
-      hole =>
-        hole.getGridX() === this.player.getGridX() && hole.getGridY() === this.player.getGridY()
-    );
+    const playerX = this.player.getGridX();
+    const playerY = this.player.getGridY();
 
-    if (playerInHole && !this.isGameOver && !this.player.isFallingIntoHole()) {
-      // Check if there's a solid stepping stone covering this hole
-      const steppingStoneAtHole = this.steppingStones.find(
-        stone =>
-          stone.getGridX() === playerInHole.getGridX() &&
-          stone.getGridY() === playerInHole.getGridY() &&
-          stone.isSolid()
-      );
+    // Use collision manager to check if player would fall into a hole
+    if (
+      this.collisionManager.wouldFallIntoHole(playerX, playerY) &&
+      !this.isGameOver &&
+      !this.player.isFallingIntoHole()
+    ) {
+      // Start the falling animation
+      this.player.startFalling();
 
-      // Only fall if there's no stepping stone covering the hole
-      if (!steppingStoneAtHole) {
-        // Start the falling animation
-        this.player.startFalling();
-
-        // Delay game over until animation completes (2.5 seconds)
-        setTimeout(() => {
-          this.isGameOver = true;
-          this.showGameOverMessage();
-          console.log('Game over! You ran into a hole!');
-        }, 1500);
-      }
+      // Delay game over until animation completes (1.5 seconds)
+      setTimeout(() => {
+        this.isGameOver = true;
+        this.showGameOverMessage();
+        console.log('Game over! You ran into a hole!');
+      }, 1500);
     }
   }
 
@@ -454,6 +432,17 @@ export class Game {
 
     // Recreate goals
     this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize, g.type || 's3bucket'));
+
+    // Register all entities with collision manager
+    this.collisionManager.clearAll();
+    this.collisionManager.registerEntity(this.player);
+    this.s3Buckets.forEach(bucket => this.collisionManager.registerEntity(bucket));
+    this.walls.forEach(wall => this.collisionManager.registerEntity(wall));
+    this.holes.forEach(hole => this.collisionManager.registerEntity(hole));
+    this.steppingStones.forEach(stone => this.collisionManager.registerEntity(stone));
+    this.stepFunctions.forEach(sf => this.collisionManager.registerEntity(sf));
+    this.files.forEach(file => this.collisionManager.registerEntity(file));
+    this.goals.forEach(goal => this.collisionManager.registerEntity(goal));
 
     // Update level text
     this.levelText.textContent = levelData.levelText || '';

@@ -1,6 +1,8 @@
+import { Entity, EntityType } from './entity';
+
 export type GoalType = 's3bucket' | 'player';
 
-export class Goal {
+export class Goal implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -84,5 +86,14 @@ export class Goal {
 
   getType(): GoalType {
     return this.type;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.GOAL;
+  }
+
+  blocksMovement(): boolean {
+    return false; // Goals don't block movement
   }
 }

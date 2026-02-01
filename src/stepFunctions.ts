@@ -1,4 +1,6 @@
-export class StepFunctions {
+import { Entity, EntityType } from './entity';
+
+export class StepFunctions implements Entity {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
@@ -81,5 +83,21 @@ export class StepFunctions {
 
   getGridY(): number {
     return this.gridY;
+  }
+
+  // Entity interface implementation
+  getEntityType(): EntityType {
+    return EntityType.STEP_FUNCTIONS;
+  }
+
+  blocksMovement(): boolean {
+    return false; // StepFunctions don't block movement
+  }
+
+  onPlayerEnter(): boolean {
+    if (!this.isConsumed) {
+      this.consume();
+    }
+    return true; // Allow movement
   }
 }
