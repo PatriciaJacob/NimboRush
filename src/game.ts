@@ -262,6 +262,31 @@ export class Game {
 
     // Move the s3Bucket (it will do its own bounds checking)
     s3Bucket.moveTo(news3BucketX, news3BucketY);
+
+    // Check if the new position has a hole
+    const holeAtTarget = this.holes.find(
+      hole => hole.getGridX() === news3BucketX && hole.getGridY() === news3BucketY
+    );
+
+    if (holeAtTarget) {
+      // Check if there's a solid stepping stone covering this hole
+      const steppingStoneAtHole = this.steppingStones.find(
+        stone =>
+          stone.getGridX() === news3BucketX &&
+          stone.getGridY() === news3BucketY &&
+          stone.isSolid()
+      );
+
+      // If there's no stepping stone, schedule the bucket to fall after movement completes
+      if (!steppingStoneAtHole) {
+        // Calculate approximate movement duration based on move speed (8 tiles per second)
+        const movementDuration = (1 / 8) * 1000; // ~125ms
+        setTimeout(() => {
+          s3Bucket.startFalling();
+        }, movementDuration);
+      }
+    }
+
     return true;
   }
 

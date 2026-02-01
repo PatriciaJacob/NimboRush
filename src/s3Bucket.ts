@@ -16,6 +16,10 @@ export class S3Bucket {
   private iconLoaded: boolean = false;
   private capacity: number;
   private filesCollected: number = 0;
+  private isFalling: boolean = false;
+  private fallProgress: number = 0;
+  private fallSpeed: number = 1.5; // duration in seconds for fall animation
+  private fallingSound: HTMLAudioElement;
 
   constructor(
     gridX: number,
@@ -38,6 +42,10 @@ export class S3Bucket {
     this.moveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
     this.moveSound.playbackRate = 3;
 
+    // Load falling sound
+    this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
+    this.fallingSound.playbackRate = 2;
+
     // Load S3 icon
     this.s3Icon = new Image();
     this.s3Icon.onload = () => {
@@ -47,7 +55,15 @@ export class S3Bucket {
   }
 
   update(deltaTime: number): void {
-    if (this.isMoving) {
+    if (this.isFalling) {
+      // Update falling animation
+      this.fallProgress += deltaTime / (this.fallSpeed * 1000);
+
+      // Cap at 1.0 when animation completes
+      if (this.fallProgress > 1) {
+        this.fallProgress = 1;
+      }
+    } else if (this.isMoving) {
       // Convert deltaTime from milliseconds to seconds and update progress
       this.moveProgress += (this.moveSpeed * deltaTime) / 1000;
 
@@ -79,8 +95,36 @@ export class S3Bucket {
     const padding = 4;
     const bodySize = this.tileSize - padding * 2;
 
-    // Create clipping path for rounded rectangle
+    // Calculate scale and rotation if falling
+    let scale = 1;
+    let rotation = 0;
+    let opacity = 1;
+
+    if (this.isFalling) {
+      // Scale from 1 to 0 (shrinking)
+      scale = 1 - this.fallProgress;
+      // Spin 3 full rotations during fall
+      rotation = this.fallProgress * Math.PI * 6;
+      // Fade out slightly towards the end
+      opacity = 1 - this.fallProgress * 0.3;
+    }
+
+    // Save context state before transformation
     ctx.save();
+
+    // Apply transformations if falling
+    if (this.isFalling) {
+      const centerX = pixelX + this.tileSize / 2;
+      const centerY = pixelY + this.tileSize / 2;
+
+      ctx.translate(centerX, centerY);
+      ctx.rotate(rotation);
+      ctx.scale(scale, scale);
+      ctx.globalAlpha = opacity;
+      ctx.translate(-centerX, -centerY);
+    }
+
+    // Create clipping path for rounded rectangle
     this.roundRect(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize, 8);
     ctx.clip();
 
@@ -94,6 +138,18 @@ export class S3Bucket {
     // Apply greyscale overlay if bucket has capacity requirements
     if (this.capacity > 0 && !this.isFull()) {
       ctx.save();
+
+      // Apply falling transformations again for the overlay
+      if (this.isFalling) {
+        const centerX = pixelX + this.tileSize / 2;
+        const centerY = pixelY + this.tileSize / 2;
+
+        ctx.translate(centerX, centerY);
+        ctx.rotate(rotation);
+        ctx.scale(scale, scale);
+        ctx.globalAlpha = opacity;
+        ctx.translate(-centerX, -centerY);
+      }
 
       // Calculate saturation based on fill percentage (0 = fully grey, 1 = full color)
       const fillPercentage = this.filesCollected / this.capacity;
@@ -194,5 +250,19 @@ export class S3Bucket {
 
   getCapacity(): number {
     return this.capacity;
+  }
+
+  startFalling(): void {
+    this.isFalling = true;
+    this.fallProgress = 0;
+    this.isMoving = false; // Stop any current movement
+
+    // Play falling sound
+    this.fallingSound.currentTime = 0; // Reset to start in case it was already playing
+    this.fallingSound.play().catch(err => console.error('Error playing falling sound:', err));
+  }
+
+  isFallingIntoHole(): boolean {
+    return this.isFalling;
   }
 }
