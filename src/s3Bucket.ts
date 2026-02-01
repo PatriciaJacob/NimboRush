@@ -20,6 +20,7 @@ export class S3Bucket {
   private fallProgress: number = 0;
   private fallSpeed: number = 1.5; // duration in seconds for fall animation
   private fallingSound: HTMLAudioElement;
+  private fillSound: HTMLAudioElement;
 
   constructor(
     gridX: number,
@@ -39,12 +40,13 @@ export class S3Bucket {
     this.targetGridY = gridY;
     this.previousGridX = gridX;
     this.previousGridY = gridY;
+
     this.moveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
     this.moveSound.playbackRate = 3;
-
-    // Load falling sound
     this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
     this.fallingSound.playbackRate = 2;
+    this.fillSound = new Audio('src/sounds/paper-rustle-81855.mp3');
+    this.fillSound.playbackRate = 5;
 
     // Load S3 icon
     this.s3Icon = new Image();
@@ -262,6 +264,8 @@ export class S3Bucket {
   addFile(): boolean {
     // Only add if we haven't reached capacity
     if (this.capacity > 0 && this.filesCollected < this.capacity) {
+      this.fillSound.currentTime = 0;
+      this.fillSound.play();
       this.filesCollected++;
       return true;
     }
