@@ -15,7 +15,7 @@ export class Wall {
     this.wallIcon.onload = () => {
       this.iconLoaded = true;
     };
-    this.wallIcon.src = 'src/icons/wall.svg';
+    this.wallIcon.src = 'src/icons/cabinet.png';
   }
 
   render(ctx: CanvasRenderingContext2D): void {
@@ -23,9 +23,7 @@ export class Wall {
     const pixelY = this.gridY * this.tileSize;
     const bodySize = this.tileSize;
 
-    ctx.fillStyle = '#366cb7';
     this.roundRect(ctx, pixelX, pixelY, bodySize, bodySize, 0);
-    ctx.fill();
 
     // Draw S3 icon if loaded (clipped to rounded rect)
     if (this.iconLoaded) {

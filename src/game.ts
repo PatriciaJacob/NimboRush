@@ -6,8 +6,9 @@ import { Goal } from './goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
 import { Wall } from './wall';
-import { stepFunctions } from './stepFunctions';
+import { StepFunctions } from './stepFunctions';
 import { SteppingStone } from './steppingStone';
+import { PaperFile } from './paperFile';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -15,11 +16,12 @@ export class Game {
   private grid: Grid;
   private player: Player;
   private s3Buckets: S3Bucket[];
-  private stepFunctions: stepFunctions[];
+  private stepFunctions: StepFunctions[];
   private holes: Hole[];
   private steppingStones: SteppingStone[];
   private goals: Goal[];
   private walls: Wall[];
+  private files: PaperFile[];
   private inputHandler: InputHandler;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
@@ -29,7 +31,6 @@ export class Game {
   private levelCompleteSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private playerMoveSound: HTMLAudioElement;
-  private powerUpSound: HTMLAudioElement;
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
   private messageSubtitle: HTMLElement;
@@ -56,6 +57,7 @@ export class Game {
     this.steppingStones = [];
     this.goals = [];
     this.walls = [];
+    this.files = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
@@ -64,7 +66,6 @@ export class Game {
     this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
     this.playerMoveSound = new Audio('src/sounds/snow-step-1-81064.mp3');
     this.playerMoveSound.playbackRate = 2;
-    this.powerUpSound = new Audio('src/sounds/power-up-type-1-230548.mp3');
 
     this.inputHandler = new InputHandler(this);
 
@@ -113,6 +114,9 @@ export class Game {
 
     // Render stepFunctions
     this.stepFunctions.forEach(stepFunction => stepFunction.render(this.ctx));
+
+    // Render files
+    this.files.forEach(file => file.render(this.ctx));
 
     // Render walls
     this.walls.forEach(wall => wall.render(this.ctx));
@@ -176,11 +180,17 @@ export class Game {
 
     if (stepFunctionAtTarget && stepFunctionAtTarget.isConsumable()) {
       stepFunctionAtTarget.consume();
-      this.powerUpSound.currentTime = 0;
-      this.powerUpSound.play();
 
       // Activate all stepping stones over holes
       this.steppingStones.forEach(stone => stone.activate());
+    }
+
+    const fileAtTarget = this.files.find(
+      file => file.getGridX() === newX && file.getGridY() === newY
+    );
+
+    if (fileAtTarget && fileAtTarget.isConsumable()) {
+      fileAtTarget.consume();
     }
 
     // No s3Bucket in the way, just move player
@@ -370,13 +380,17 @@ export class Game {
 
     // Recreate stepFunctions
     this.stepFunctions =
-      levelData.stepFunctions?.map(b => new stepFunctions(b.x, b.y, this.tileSize)) || [];
+      levelData.stepFunctions?.map(b => new StepFunctions(b.x, b.y, this.tileSize)) || [];
 
     // Recreate holes
     this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];
 
     // Create stepping stones for each hole (invisible initially)
-    this.steppingStones = this.holes.map(h => new SteppingStone(h.getGridX(), h.getGridY(), this.tileSize));
+    this.steppingStones = this.holes.map(
+      h => new SteppingStone(h.getGridX(), h.getGridY(), this.tileSize)
+    );
+
+    this.files = levelData.files?.map(f => new PaperFile(f.x, f.y, this.tileSize)) || [];
 
     // Recreate walls
     this.walls = levelData.walls?.map(w => new Wall(w.x, w.y, this.tileSize)) || [];

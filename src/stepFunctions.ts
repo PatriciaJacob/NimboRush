@@ -1,10 +1,11 @@
-export class stepFunctions {
+export class StepFunctions {
   private gridX: number;
   private gridY: number;
   private tileSize: number;
   private stepFunctionsIcon: HTMLImageElement;
   private iconLoaded: boolean = false;
   private isConsumed: boolean = false;
+  private powerUpSound: HTMLAudioElement;
 
   constructor(gridX: number, gridY: number, tileSize: number) {
     this.gridX = gridX;
@@ -16,9 +17,12 @@ export class stepFunctions {
       this.iconLoaded = true;
     };
     this.stepFunctionsIcon.src = 'src/icons/stepFunctions.svg';
+    this.powerUpSound = new Audio('src/sounds/power-up-type-1-230548.mp3');
   }
 
   consume(): void {
+    this.powerUpSound.currentTime = 0;
+    this.powerUpSound.play();
     this.isConsumed = true;
   }
 
