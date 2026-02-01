@@ -6,6 +6,7 @@ import { Goal } from './goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
 import { Wall } from './wall';
+import { stepFunctions } from './stepFunctions';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -13,6 +14,7 @@ export class Game {
   private grid: Grid;
   private player: Player;
   private s3Buckets: S3Bucket[];
+  private stepFunctions: stepFunctions[];
   private holes: Hole[];
   private goals: Goal[];
   private walls: Wall[];
@@ -25,6 +27,7 @@ export class Game {
   private levelCompleteSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private playerMoveSound: HTMLAudioElement;
+  private powerUpSound: HTMLAudioElement;
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
   private messageSubtitle: HTMLElement;
@@ -46,6 +49,7 @@ export class Game {
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.s3Buckets = [];
+    this.stepFunctions = [];
     this.holes = [];
     this.goals = [];
     this.walls = [];
@@ -57,6 +61,7 @@ export class Game {
     this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
     this.playerMoveSound = new Audio('src/sounds/snow-step-1-81064.mp3');
     this.playerMoveSound.playbackRate = 2;
+    this.powerUpSound = new Audio('src/sounds/power-up-type-1-230548.mp3');
 
     this.inputHandler = new InputHandler(this);
 
@@ -98,6 +103,9 @@ export class Game {
 
     // Render holes
     this.holes.forEach(hole => hole.render(this.ctx));
+
+    // Render stepFunctions
+    this.stepFunctions.forEach(stepFunction => stepFunction.render(this.ctx));
 
     // Render walls
     this.walls.forEach(wall => wall.render(this.ctx));
@@ -154,6 +162,15 @@ export class Game {
 
     this.playerMoveSound.currentTime = 0;
     this.playerMoveSound.play();
+
+    const stepFunctionAtTarget = this.stepFunctions.find(
+      stepFunction => stepFunction.getGridX() === newX && stepFunction.getGridY() === newY
+    );
+
+    if (stepFunctionAtTarget) {
+      this.powerUpSound.currentTime = 0;
+      this.powerUpSound.play();
+    }
 
     // No s3Bucket in the way, just move player
     this.player.moveTo(newX, newY);
@@ -317,6 +334,10 @@ export class Game {
       levelData.s3Buckets?.map(
         b => new S3Bucket(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
       ) || [];
+
+    // Recreate stepFunctions
+    this.stepFunctions =
+      levelData.stepFunctions?.map(b => new stepFunctions(b.x, b.y, this.tileSize)) || [];
 
     // Recreate holes
     this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];

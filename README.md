@@ -29,10 +29,12 @@ Reach the green square - Could be an "Availability Zone" marker
 Hybrid - Some levels require both (push objects AND reach destination)?
 
 ### Primary Mechanic: S3 Buckets
-Push S3 bucket icons to designated "storage zones" (classic Sokoban)
-Different bucket types: regular, versioned (can be reset), glacier (moves slowly)
-Essential Puzzle Elements
-Step Functions - Your bridge idea is perfect
+- Push S3 bucket icons to designated "storage zones" (classic Sokoban)
+  - Different bucket types: regular, versioned (can be reset), glacier (moves slowly)
+- Step Functions - consumable that creates stepping stones in maybe water?
+- EC2 Instances - consumable that gives you x platforms to walk over holes, number stays over nimbo head and spawns new instances/platforms as needed. has a limit though.
+
+
 Interact to spawn/despawn step sequences
 Could have limited uses per level
 Lambda Functions - Push-button triggers
@@ -53,4 +55,4 @@ Collect IAM role to unlock certain areas or interact with specific objects
 
 ## Credits
 
-Sound Effect by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038), [u_o8xh7gwsrj](https://pixabay.com/users/u_o8xh7gwsrj-54433977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476370) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)
+Sound Effect by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038), [u_o8xh7gwsrj](https://pixabay.com/users/u_o8xh7gwsrj-54433977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476370), [Ribhav Agrawal](https://pixabay.com/users/ribhavagrawal-39286533/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=230548) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)

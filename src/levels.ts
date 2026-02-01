@@ -5,6 +5,7 @@ export interface LevelData {
   gridHeight: number;
   playerStart: { x: number; y: number };
   s3Buckets?: { x: number; y: number }[];
+  stepFunctions?: { x: number; y: number }[];
   holes?: { x: number; y: number }[];
   goals: { x: number; y: number; type?: 's3bucket' | 'player' }[];
   levelText?: string;
@@ -39,6 +40,7 @@ export const LEVELS: LevelData[] = [
     gridHeight: 10,
     playerStart: { x: 1, y: 1 },
     s3Buckets: [{ x: 3, y: 2 }],
+    stepFunctions: [{ x: 8, y: 8 }],
     holes: [{ x: 2, y: 2 }],
     goals: [{ x: 9, y: 3 }],
     walls: [
