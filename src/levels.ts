@@ -8,29 +8,30 @@ export interface LevelData {
   holes?: { x: number; y: number }[];
   goals: { x: number; y: number; type?: 's3bucket' | 'player' }[];
   levelText?: string;
+  walls?: { x: number; y: number }[];
 }
 
 export const LEVELS: LevelData[] = [
-  {
-    id: 0,
-    name: 'Tutorial',
-    gridWidth: 7,
-    gridHeight: 1,
-    playerStart: { x: 0, y: 0 },
-    levelText:
-      'Welcome, Nimbo! Use arrow keys to reach the orange goal. Time to deploy yourself to production! 🚀',
-    goals: [{ x: 6, y: 0, type: 'player' }],
-  },
-  {
-    id: 1,
-    name: 'Tutorial S3',
-    gridWidth: 7,
-    gridHeight: 1,
-    playerStart: { x: 0, y: 0 },
-    s3Buckets: [{ x: 2, y: 0 }],
-    levelText: 'Push the S3 bucket to the green goal. Storage made simple... or is it? 📦',
-    goals: [{ x: 6, y: 0 }],
-  },
+  // {
+  //   id: 0,
+  //   name: 'Tutorial',
+  //   gridWidth: 7,
+  //   gridHeight: 1,
+  //   playerStart: { x: 0, y: 0 },
+  //   levelText:
+  //     'Welcome, Nimbo! Use arrow keys to reach the orange goal. Time to deploy yourself to production! 🚀',
+  //   goals: [{ x: 6, y: 0, type: 'player' }],
+  // },
+  // {
+  //   id: 1,
+  //   name: 'Tutorial S3',
+  //   gridWidth: 7,
+  //   gridHeight: 1,
+  //   playerStart: { x: 0, y: 0 },
+  //   s3Buckets: [{ x: 2, y: 0 }],
+  //   levelText: 'Push the S3 bucket to the green goal. Storage made simple... or is it? 📦',
+  //   goals: [{ x: 6, y: 0 }],
+  // },
   {
     id: 11,
     name: 'First Steps',
@@ -40,6 +41,11 @@ export const LEVELS: LevelData[] = [
     s3Buckets: [{ x: 3, y: 2 }],
     holes: [{ x: 2, y: 2 }],
     goals: [{ x: 9, y: 3 }],
+    walls: [
+      { x: 1, y: 4 },
+      { x: 2, y: 4 },
+      { x: 3, y: 4 },
+    ],
   },
   {
     id: 12,

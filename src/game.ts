@@ -5,6 +5,7 @@ import { Hole } from './hole';
 import { Goal } from './goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
+import { Wall } from './wall';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -14,6 +15,7 @@ export class Game {
   private s3Buckets: S3Bucket[];
   private holes: Hole[];
   private goals: Goal[];
+  private walls: Wall[];
   private inputHandler: InputHandler;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
@@ -46,6 +48,7 @@ export class Game {
     this.s3Buckets = [];
     this.holes = [];
     this.goals = [];
+    this.walls = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
@@ -96,6 +99,9 @@ export class Game {
     // Render holes
     this.holes.forEach(hole => hole.render(this.ctx));
 
+    // Render walls
+    this.walls.forEach(wall => wall.render(this.ctx));
+
     // Render s3Buckets
     this.s3Buckets.forEach(s3Bucket => s3Bucket.render(this.ctx));
 
@@ -110,6 +116,16 @@ export class Game {
 
     // Don't allow movement if player is already moving
     if (this.player.isCurrentlyMoving()) {
+      return false;
+    }
+
+    const wallAtTarget = this.walls.find(
+      wall => wall.getGridX() === newX && wall.getGridY() === newY
+    );
+
+    if (wallAtTarget) {
+      this.invalidMoveSound.currentTime = 0;
+      this.invalidMoveSound.play();
       return false;
     }
 
@@ -304,6 +320,9 @@ export class Game {
 
     // Recreate holes
     this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];
+
+    // Recreate walls
+    this.walls = levelData.walls?.map(w => new Wall(w.x, w.y, this.tileSize)) || [];
 
     // Recreate goals
     this.goals = levelData.goals.map(g => new Goal(g.x, g.y, this.tileSize, g.type || 's3bucket'));
