@@ -9,11 +9,13 @@ import { Wall } from './wall';
 import { StepFunctions } from './stepFunctions';
 import { SteppingStone } from './steppingStone';
 import { PaperFile } from './paperFile';
+import { Inventory } from './inventory';
 
 export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private grid: Grid;
+  private inventory: Inventory;
   private player: Player;
   private s3Buckets: S3Bucket[];
   private stepFunctions: StepFunctions[];
@@ -59,6 +61,7 @@ export class Game {
     this.walls = [];
     this.files = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
+    this.inventory = new Inventory(12, this.tileSize, 10); // Default, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
     // Load sounds
@@ -126,6 +129,9 @@ export class Game {
 
     // Render player
     this.player.render(this.ctx);
+
+    // Render inventory
+    this.inventory.render(this.ctx, this.player.getFilesCollected());
   }
 
   tryMovePlayer(newX: number, newY: number): boolean {
@@ -371,9 +377,12 @@ export class Game {
     this.currentLevelIndex = levelIndex;
     this.isGameWon = false;
 
-    // Update canvas size based on level
+    // Recreate inventory
+    this.inventory = new Inventory(levelData.gridWidth, this.tileSize, levelData.gridHeight);
+
+    // Update canvas size based on level (including inventory space)
     this.canvas.width = levelData.gridWidth * this.tileSize;
-    this.canvas.height = levelData.gridHeight * this.tileSize;
+    this.canvas.height = levelData.gridHeight * this.tileSize + this.inventory.getHeight();
 
     // Recreate grid
     this.grid = new Grid(levelData.gridWidth, levelData.gridHeight, this.tileSize);
