@@ -164,6 +164,44 @@ export class S3Bucket {
 
       ctx.restore();
     }
+
+    // Draw capacity number on top of the bucket if it has a capacity requirement
+    if (this.capacity > 0) {
+      ctx.save();
+
+      // Apply falling transformations for the text as well
+      if (this.isFalling) {
+        const centerX = pixelX + this.tileSize / 2;
+        const centerY = pixelY + this.tileSize / 2;
+
+        ctx.translate(centerX, centerY);
+        ctx.rotate(rotation);
+        ctx.scale(scale, scale);
+        ctx.globalAlpha = opacity;
+        ctx.translate(-centerX, -centerY);
+      }
+
+      if (!this.isFull()) {
+        // Set font properties
+        const fontSize = Math.floor(this.tileSize * 0.35);
+        ctx.font = `bold ${fontSize}px Arial`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        // Display "collected/capacity"
+        const capacityText = `${this.filesCollected}/${this.capacity}`;
+
+        // Calculate text position (center top of the bucket)
+        const textX = pixelX + this.tileSize / 2;
+        const textY = pixelY + this.tileSize / 2;
+
+        // Draw the capacity text
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText(capacityText, textX, textY);
+      }
+
+      ctx.restore();
+    }
   }
 
   private roundRect(
