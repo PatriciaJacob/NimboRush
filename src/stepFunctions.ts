@@ -18,14 +18,20 @@ export class stepFunctions {
     this.stepFunctionsIcon.src = 'src/icons/stepFunctions.svg';
   }
 
-  // update(deltaTime: number): void {
-  //   if (this.isConsumed) {
-  //    // stop rendering
+  consume(): void {
+    this.isConsumed = true;
+  }
 
-  //   }
-  // }
+  isConsumable(): boolean {
+    return !this.isConsumed;
+  }
 
   render(ctx: CanvasRenderingContext2D): void {
+    // Don't render if consumed
+    if (this.isConsumed) {
+      return;
+    }
+
     const pixelX = this.gridX * this.tileSize;
     const pixelY = this.gridY * this.tileSize;
     const padding = 4;

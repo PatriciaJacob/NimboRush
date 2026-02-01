@@ -167,7 +167,8 @@ export class Game {
       stepFunction => stepFunction.getGridX() === newX && stepFunction.getGridY() === newY
     );
 
-    if (stepFunctionAtTarget) {
+    if (stepFunctionAtTarget && stepFunctionAtTarget.isConsumable()) {
+      stepFunctionAtTarget.consume();
       this.powerUpSound.currentTime = 0;
       this.powerUpSound.play();
     }
