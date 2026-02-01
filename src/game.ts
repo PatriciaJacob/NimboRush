@@ -7,6 +7,7 @@ import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
 import { Wall } from './wall';
 import { stepFunctions } from './stepFunctions';
+import { SteppingStone } from './steppingStone';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -16,6 +17,7 @@ export class Game {
   private s3Buckets: S3Bucket[];
   private stepFunctions: stepFunctions[];
   private holes: Hole[];
+  private steppingStones: SteppingStone[];
   private goals: Goal[];
   private walls: Wall[];
   private inputHandler: InputHandler;
@@ -51,6 +53,7 @@ export class Game {
     this.s3Buckets = [];
     this.stepFunctions = [];
     this.holes = [];
+    this.steppingStones = [];
     this.goals = [];
     this.walls = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
@@ -86,6 +89,7 @@ export class Game {
   private update(deltaTime: number): void {
     this.player.update(deltaTime);
     this.s3Buckets.forEach(s3Bucket => s3Bucket.update(deltaTime));
+    this.steppingStones.forEach(stone => stone.update(deltaTime));
     this.checkWinCondition();
     this.checkGameOverCondition();
   }
@@ -103,6 +107,9 @@ export class Game {
 
     // Render holes
     this.holes.forEach(hole => hole.render(this.ctx));
+
+    // Render stepping stones (over holes)
+    this.steppingStones.forEach(stone => stone.render(this.ctx));
 
     // Render stepFunctions
     this.stepFunctions.forEach(stepFunction => stepFunction.render(this.ctx));
@@ -171,6 +178,9 @@ export class Game {
       stepFunctionAtTarget.consume();
       this.powerUpSound.currentTime = 0;
       this.powerUpSound.play();
+
+      // Activate all stepping stones over holes
+      this.steppingStones.forEach(stone => stone.activate());
     }
 
     // No s3Bucket in the way, just move player
@@ -276,15 +286,26 @@ export class Game {
     );
 
     if (playerInHole && !this.isGameOver && !this.player.isFallingIntoHole()) {
-      // Start the falling animation
-      this.player.startFalling();
+      // Check if there's a solid stepping stone covering this hole
+      const steppingStoneAtHole = this.steppingStones.find(
+        stone =>
+          stone.getGridX() === playerInHole.getGridX() &&
+          stone.getGridY() === playerInHole.getGridY() &&
+          stone.isSolid()
+      );
 
-      // Delay game over until animation completes (2.5 seconds)
-      setTimeout(() => {
-        this.isGameOver = true;
-        this.showGameOverMessage();
-        console.log('Game over! You ran into a hole!');
-      }, 1500);
+      // Only fall if there's no stepping stone covering the hole
+      if (!steppingStoneAtHole) {
+        // Start the falling animation
+        this.player.startFalling();
+
+        // Delay game over until animation completes (2.5 seconds)
+        setTimeout(() => {
+          this.isGameOver = true;
+          this.showGameOverMessage();
+          console.log('Game over! You ran into a hole!');
+        }, 1500);
+      }
     }
   }
 
@@ -353,6 +374,9 @@ export class Game {
 
     // Recreate holes
     this.holes = levelData.holes?.map(h => new Hole(h.x, h.y, this.tileSize)) || [];
+
+    // Create stepping stones for each hole (invisible initially)
+    this.steppingStones = this.holes.map(h => new SteppingStone(h.getGridX(), h.getGridY(), this.tileSize));
 
     // Recreate walls
     this.walls = levelData.walls?.map(w => new Wall(w.x, w.y, this.tileSize)) || [];
