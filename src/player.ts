@@ -17,6 +17,7 @@ export class Player {
   private fallingSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private playerMoveSound: HTMLAudioElement;
+  private filesCollected: number = 0;
 
   constructor(
     gridX: number,
@@ -203,5 +204,25 @@ export class Player {
 
   isFallingIntoHole(): boolean {
     return this.isFalling;
+  }
+
+  collectFile(): void {
+    this.filesCollected++;
+  }
+
+  depositFile(): boolean {
+    if (this.filesCollected > 0) {
+      this.filesCollected--;
+      return true;
+    }
+    return false;
+  }
+
+  getFilesCollected(): number {
+    return this.filesCollected;
+  }
+
+  hasFiles(): boolean {
+    return this.filesCollected > 0;
   }
 }

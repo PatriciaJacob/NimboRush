@@ -14,16 +14,20 @@ export class S3Bucket {
   private moveSound: HTMLAudioElement;
   private s3Icon: HTMLImageElement;
   private iconLoaded: boolean = false;
+  private capacity: number;
+  private filesCollected: number = 0;
 
   constructor(
     gridX: number,
     gridY: number,
     tileSize: number,
     gridWidth: number,
-    gridHeight: number
+    gridHeight: number,
+    capacity?: number
   ) {
     this.gridX = gridX;
     this.gridY = gridY;
+    this.capacity = capacity || 0;
     this.tileSize = tileSize;
     this.gridWidth = gridWidth;
     this.gridHeight = gridHeight;
@@ -86,6 +90,24 @@ export class S3Bucket {
     }
 
     ctx.restore();
+
+    // Apply greyscale overlay if bucket has capacity requirements
+    if (this.capacity > 0 && !this.isFull()) {
+      ctx.save();
+
+      // Calculate saturation based on fill percentage (0 = fully grey, 1 = full color)
+      const fillPercentage = this.filesCollected / this.capacity;
+
+      // Grey overlay gets more transparent as we collect files
+      const greyOpacity = 0.8 * (1 - fillPercentage);
+
+      // Draw semi-transparent grey overlay
+      ctx.fillStyle = `rgba(80, 80, 80, ${greyOpacity})`;
+      this.roundRect(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize, 8);
+      ctx.fill();
+
+      ctx.restore();
+    }
   }
 
   private roundRect(
@@ -141,5 +163,36 @@ export class S3Bucket {
 
   isCurrentlyMoving(): boolean {
     return this.isMoving;
+  }
+
+  addFile(): boolean {
+    // Only add if we haven't reached capacity
+    if (this.capacity > 0 && this.filesCollected < this.capacity) {
+      this.filesCollected++;
+      return true;
+    }
+    return false;
+  }
+
+  isFull(): boolean {
+    // If no capacity requirement, it's always considered "full" (movable)
+    if (this.capacity === 0) {
+      return true;
+    }
+
+    return this.filesCollected >= this.capacity;
+  }
+
+  isMovable(): boolean {
+    // Bucket is movable when it's full (has collected enough files)
+    return this.isFull();
+  }
+
+  getFilesCollected(): number {
+    return this.filesCollected;
+  }
+
+  getCapacity(): number {
+    return this.capacity;
   }
 }

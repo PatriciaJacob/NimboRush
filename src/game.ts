@@ -158,6 +158,15 @@ export class Game {
       const dx = newX - this.player.getGridX();
       const dy = newY - this.player.getGridY();
 
+      // Check if player has files and bucket needs them
+      if (this.player.hasFiles() && !s3BucketAtTarget.isFull()) {
+        // Deposit a file into the bucket
+        if (this.player.depositFile()) {
+          s3BucketAtTarget.addFile();
+        }
+        return false; // Don't move player when depositing
+      }
+
       // Try to push the s3Bucket
       if (this.tryPushs3Bucket(s3BucketAtTarget, dx, dy)) {
         // s3Bucket was pushed successfully, move player
@@ -185,12 +194,14 @@ export class Game {
       this.steppingStones.forEach(stone => stone.activate());
     }
 
+    // Check if there's a file at the target position and collect it
     const fileAtTarget = this.files.find(
       file => file.getGridX() === newX && file.getGridY() === newY
     );
 
     if (fileAtTarget && fileAtTarget.isConsumable()) {
       fileAtTarget.consume();
+      this.player.collectFile();
     }
 
     // No s3Bucket in the way, just move player
@@ -201,6 +212,10 @@ export class Game {
   private tryPushs3Bucket(s3Bucket: S3Bucket, dx: number, dy: number): boolean {
     // Don't push if s3Bucket is already moving
     if (s3Bucket.isCurrentlyMoving()) {
+      return false;
+    }
+
+    if (!s3Bucket.isFull()) {
       return false;
     }
 
@@ -375,7 +390,15 @@ export class Game {
     // Recreate s3Buckets
     this.s3Buckets =
       levelData.s3Buckets?.map(
-        b => new S3Bucket(b.x, b.y, this.tileSize, levelData.gridWidth, levelData.gridHeight)
+        b =>
+          new S3Bucket(
+            b.x,
+            b.y,
+            this.tileSize,
+            levelData.gridWidth,
+            levelData.gridHeight,
+            b.capacity
+          )
       ) || [];
 
     // Recreate stepFunctions
