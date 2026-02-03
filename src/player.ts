@@ -8,7 +8,7 @@ export class Player implements Entity {
   private gridHeight: number;
   private isMoving: boolean = false;
   private moveProgress: number = 0;
-  private moveSpeed: number = 8; // tiles per second
+  private moveSpeed: number = 3; // tiles per second
   private targetGridX: number;
   private targetGridY: number;
   private previousGridX: number;
@@ -19,6 +19,13 @@ export class Player implements Entity {
   private fallingSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private filesCollected: number = 0;
+  private sprite: HTMLImageElement;
+  private spriteLoaded: boolean = false;
+  private walkFrames: HTMLImageElement[] = [];
+  private walkFramesLoaded: number = 0;
+  private readonly totalWalkFrames: number = 10;
+  private walkAnimationTime: number = 0;
+  private readonly walkFrameDuration: number = 33; // milliseconds per frame (~10 frames in 333ms movement)
 
   constructor(
     gridX: number,
@@ -41,6 +48,23 @@ export class Player implements Entity {
     this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
     this.fallingSound.playbackRate = 2;
     this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
+
+    // Load player sprite
+    this.sprite = new Image();
+    this.sprite.onload = () => {
+      this.spriteLoaded = true;
+    };
+    this.sprite.src = 'src/assets/Nimbo/NimboStand.png';
+
+    // Load walk animation frames
+    for (let i = 1; i <= this.totalWalkFrames; i++) {
+      const frame = new Image();
+      frame.onload = () => {
+        this.walkFramesLoaded++;
+      };
+      frame.src = `src/assets/Nimbo/NimboWalk/Nimbo - - ${i}.png`;
+      this.walkFrames.push(frame);
+    }
   }
 
   update(deltaTime: number): void {
@@ -56,12 +80,16 @@ export class Player implements Entity {
       // Convert deltaTime from milliseconds to seconds and update progress
       this.moveProgress += (this.moveSpeed * deltaTime) / 1000;
 
+      // Update walk animation time while moving
+      this.walkAnimationTime += deltaTime;
+
       if (this.moveProgress >= 1) {
         // Movement complete
         this.gridX = this.targetGridX;
         this.gridY = this.targetGridY;
         this.isMoving = false;
         this.moveProgress = 0;
+        this.walkAnimationTime = 0;
       }
     }
   }
@@ -81,7 +109,7 @@ export class Player implements Entity {
 
     const pixelX = renderX * this.tileSize;
     const pixelY = renderY * this.tileSize;
-    const padding = 4;
+    const padding = 0;
 
     // Calculate scale and rotation if falling
     let scale = 1;
@@ -112,52 +140,24 @@ export class Player implements Entity {
       ctx.translate(-centerX, -centerY);
     }
 
-    // Draw Nimbo as a simple cloud-like shape
-    ctx.fillStyle = '#665CD2';
+    // Draw Nimbo sprite
+    const spriteSize = this.tileSize - padding * 2;
 
-    // Main body (rounded rectangle)
-    const bodySize = this.tileSize - padding * 2;
-    this.roundRect(ctx, pixelX + padding, pixelY + padding, bodySize, bodySize, 8);
-    ctx.fill();
-
-    // Add some character details (simple face)
-    ctx.fillStyle = '#ecf0f1';
-    const eyeSize = 6;
-    const eyeY = pixelY + this.tileSize / 2 - 4;
-
-    // Left eye
-    ctx.beginPath();
-    ctx.arc(pixelX + this.tileSize / 2 - 8, eyeY, eyeSize / 2, 0, Math.PI * 2);
-    ctx.fill();
-
-    // Right eye
-    ctx.beginPath();
-    ctx.arc(pixelX + this.tileSize / 2 + 8, eyeY, eyeSize / 2, 0, Math.PI * 2);
-    ctx.fill();
+    if (this.isMoving && this.walkFramesLoaded === this.totalWalkFrames) {
+      // Use walk animation when moving
+      const frameIndex = Math.floor(this.walkAnimationTime / this.walkFrameDuration) % this.totalWalkFrames;
+      ctx.drawImage(this.walkFrames[frameIndex], pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+    } else if (this.spriteLoaded) {
+      // Use standing sprite when not moving
+      ctx.drawImage(this.sprite, pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+    } else {
+      // Fallback: draw purple square while sprites are loading
+      ctx.fillStyle = '#665CD2';
+      ctx.fillRect(pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+    }
 
     // Restore context state
     ctx.restore();
-  }
-
-  private roundRect(
-    ctx: CanvasRenderingContext2D,
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    radius: number
-  ): void {
-    ctx.beginPath();
-    ctx.moveTo(x + radius, y);
-    ctx.lineTo(x + width - radius, y);
-    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-    ctx.lineTo(x + width, y + height - radius);
-    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-    ctx.lineTo(x + radius, y + height);
-    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-    ctx.lineTo(x, y + radius);
-    ctx.quadraticCurveTo(x, y, x + radius, y);
-    ctx.closePath();
   }
 
   moveTo(gridX: number, gridY: number): void {

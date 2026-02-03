@@ -105,36 +105,36 @@ export const LEVELS: LevelData[] = [
       { x: 5, y: 6 },
     ],
   },
-  {
-    id: 12,
-    name: 'Double Trouble',
-    gridWidth: 12,
-    gridHeight: 10,
-    playerStart: { x: 1, y: 1 },
-    s3Buckets: [
-      { x: 3, y: 2 },
-      { x: 5, y: 4 },
-    ],
-    goals: [
-      { x: 9, y: 3 },
-      { x: 9, y: 5 },
-    ],
-  },
-  {
-    id: 13,
-    name: 'The Puzzle',
-    gridWidth: 12,
-    gridHeight: 10,
-    playerStart: { x: 1, y: 5 },
-    s3Buckets: [
-      { x: 4, y: 3 },
-      { x: 5, y: 5 },
-      { x: 4, y: 7 },
-    ],
-    goals: [
-      { x: 10, y: 3 },
-      { x: 10, y: 5 },
-      { x: 10, y: 7 },
-    ],
-  },
+  // {
+  //   id: 12,
+  //   name: 'Double Trouble',
+  //   gridWidth: 12,
+  //   gridHeight: 10,
+  //   playerStart: { x: 1, y: 1 },
+  //   s3Buckets: [
+  //     { x: 3, y: 2 },
+  //     { x: 5, y: 4 },
+  //   ],
+  //   goals: [
+  //     { x: 9, y: 3 },
+  //     { x: 9, y: 5 },
+  //   ],
+  // },
+  // {
+  //   id: 13,
+  //   name: 'The Puzzle',
+  //   gridWidth: 12,
+  //   gridHeight: 10,
+  //   playerStart: { x: 1, y: 5 },
+  //   s3Buckets: [
+  //     { x: 4, y: 3 },
+  //     { x: 5, y: 5 },
+  //     { x: 4, y: 7 },
+  //   ],
+  //   goals: [
+  //     { x: 10, y: 3 },
+  //     { x: 10, y: 5 },
+  //     { x: 10, y: 7 },
+  //   ],
+  // },
 ];
