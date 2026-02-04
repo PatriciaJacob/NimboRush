@@ -31,15 +31,20 @@ export class Game {
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
   private isGameOver: boolean = false;
+  private isPaused: boolean = false;
+  private isMuted: boolean = false;
   private currentLevelIndex: number = 0;
   private tileSize: number = 48;
   private levelCompleteSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private playerMoveSound: HTMLAudioElement;
+  private backgroundMusic: HTMLAudioElement;
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
   private messageSubtitle: HTMLElement;
   private levelText: HTMLElement;
+  private pauseOverlay: HTMLElement;
+  private soundToggleBtn: HTMLElement;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -54,6 +59,11 @@ export class Game {
     this.messageTitle = document.getElementById('message-title')!;
     this.messageSubtitle = document.getElementById('message-subtitle')!;
     this.levelText = document.getElementById('level-text')!;
+    this.pauseOverlay = document.getElementById('pause-overlay')!;
+    this.soundToggleBtn = document.getElementById('sound-toggle')!;
+
+    // Setup sound toggle click handler
+    this.soundToggleBtn.addEventListener('click', () => this.toggleMute());
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.s3Buckets = [];
@@ -73,6 +83,11 @@ export class Game {
     this.playerMoveSound = new Audio('src/assets/sounds/snow-step-1-81064.mp3');
     this.playerMoveSound.playbackRate = 2;
 
+    // Load and setup background music
+    this.backgroundMusic = new Audio('src/assets/sounds/Cardboard Crates & Coffee Breaks.mp3');
+    this.backgroundMusic.loop = true;
+    this.backgroundMusic.volume = 0.3;
+
     // Initialize collision manager
     this.collisionManager = new CollisionManager();
 
@@ -83,6 +98,18 @@ export class Game {
   }
 
   start(): void {
+    // Start background music (browsers require user interaction first)
+    this.backgroundMusic.play().catch(() => {
+      // Auto-play was prevented, will start on first user interaction
+      const startMusic = () => {
+        this.backgroundMusic.play();
+        document.removeEventListener('keydown', startMusic);
+        document.removeEventListener('click', startMusic);
+      };
+      document.addEventListener('keydown', startMusic);
+      document.addEventListener('click', startMusic);
+    });
+
     this.gameLoop(0);
   }
 
@@ -479,5 +506,37 @@ export class Game {
     } else {
       console.log('No more levels! You beat the game!');
     }
+  }
+
+  togglePause(): void {
+    // Don't allow pausing during game over or win states
+    if (this.isGameOver || this.isGameWon) {
+      return;
+    }
+
+    this.isPaused = !this.isPaused;
+
+    if (this.isPaused) {
+      this.pauseOverlay.classList.add('show');
+    } else {
+      this.pauseOverlay.classList.remove('show');
+    }
+  }
+
+  toggleMute(): void {
+    this.isMuted = !this.isMuted;
+
+    // Mute/unmute all audio elements
+    this.levelCompleteSound.muted = this.isMuted;
+    this.invalidMoveSound.muted = this.isMuted;
+    this.playerMoveSound.muted = this.isMuted;
+    this.backgroundMusic.muted = this.isMuted;
+
+    // Update button text
+    this.soundToggleBtn.textContent = this.isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+  }
+
+  getIsPaused(): boolean {
+    return this.isPaused;
   }
 }

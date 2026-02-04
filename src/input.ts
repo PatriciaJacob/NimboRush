@@ -27,6 +27,17 @@ export class InputHandler {
 
     this.keysPressed.add(event.key);
 
+    // Handle pause toggle (always available)
+    if (event.key === 'Escape' || event.key === 'p' || event.key === 'P') {
+      this.game.togglePause();
+      return;
+    }
+
+    // Block other inputs while paused
+    if (this.game.getIsPaused()) {
+      return;
+    }
+
     // Get player position from game
     const player = this.game.getPlayer();
     const currentX = player.getGridX();

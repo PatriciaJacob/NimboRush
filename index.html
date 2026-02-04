@@ -88,6 +88,66 @@
         font-size: 20px;
         color: #ecf0f1;
       }
+      #pause-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.85);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+      #pause-overlay.show {
+        display: flex;
+      }
+      .pause-content {
+        background-color: #34495e;
+        padding: 40px 50px;
+        border-radius: 10px;
+        text-align: center;
+        border: 3px solid #2c3e50;
+        min-width: 280px;
+      }
+      .pause-title {
+        font-size: 36px;
+        font-weight: bold;
+        color: #f39c12;
+        margin-bottom: 25px;
+      }
+      .pause-controls {
+        margin-bottom: 25px;
+      }
+      .pause-btn {
+        background-color: #2c3e50;
+        color: #ecf0f1;
+        border: 2px solid #3b536b;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-family: monospace;
+        cursor: pointer;
+        border-radius: 6px;
+        transition: background-color 0.2s;
+      }
+      .pause-btn:hover {
+        background-color: #3b536b;
+      }
+      .pause-info {
+        color: #95a5a6;
+        font-size: 14px;
+        margin-top: 20px;
+      }
+      .pause-info div {
+        margin: 8px 0;
+      }
+      .key {
+        background-color: #2c3e50;
+        padding: 2px 8px;
+        border-radius: 4px;
+        color: #ecf0f1;
+      }
     </style>
   </head>
   <body>
@@ -95,6 +155,19 @@
       <div class="message-content">
         <div class="message-title" id="message-title"></div>
         <div class="message-subtitle" id="message-subtitle"></div>
+      </div>
+    </div>
+    <div id="pause-overlay">
+      <div class="pause-content">
+        <div class="pause-title">PAUSED</div>
+        <div class="pause-controls">
+          <button class="pause-btn" id="sound-toggle">🔊 Sound On</button>
+        </div>
+        <div class="pause-info">
+          <div><span class="key">Esc</span> or <span class="key">P</span> to resume</div>
+          <div><span class="key">R</span> to restart level</div>
+          <div><span class="key">Arrow keys</span> to move</div>
+        </div>
       </div>
     </div>
     <div id="game-container">
