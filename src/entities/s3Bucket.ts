@@ -1,4 +1,5 @@
 import { Entity, EntityType } from './entity';
+import { MOVE_SPEED, FALL_SPEED } from '../constants';
 
 export class S3Bucket implements Entity {
   private gridX: number;
@@ -8,7 +9,7 @@ export class S3Bucket implements Entity {
   private gridHeight: number;
   private isMoving: boolean = false;
   private moveProgress: number = 0;
-  private moveSpeed: number = 3; // tiles per second
+  private moveSpeed: number = MOVE_SPEED;
   private targetGridX: number;
   private targetGridY: number;
   private previousGridX: number;
@@ -20,7 +21,7 @@ export class S3Bucket implements Entity {
   private filesCollected: number = 0;
   private isFalling: boolean = false;
   private fallProgress: number = 0;
-  private fallSpeed: number = 1.5; // duration in seconds for fall animation
+  private fallSpeed: number = FALL_SPEED;
   private fallingSound: HTMLAudioElement;
   private fillSound: HTMLAudioElement;
 

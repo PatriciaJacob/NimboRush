@@ -13,6 +13,7 @@ import { Inventory } from './inventory';
 import { CollisionManager } from './collisionManager';
 import { EntityType } from './entities/entity';
 import { AudioManager } from './audioManager';
+import { MOVE_SPEED } from './constants';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -269,8 +270,8 @@ export class Game {
 
     // Check if the bucket would fall into a hole
     if (this.collisionManager.wouldFallIntoHole(news3BucketX, news3BucketY)) {
-      // Calculate approximate movement duration based on move speed (8 tiles per second)
-      const movementDuration = (1 / 8) * 1000; // ~125ms
+      // Calculate approximate movement duration based on move speed
+      const movementDuration = (1 / MOVE_SPEED) * 1000;
       setTimeout(() => {
         s3Bucket.startFalling();
       }, movementDuration);

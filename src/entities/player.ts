@@ -1,4 +1,5 @@
 import { Entity, EntityType } from './entity';
+import { MOVE_SPEED, FALL_SPEED } from '../constants';
 
 export class Player implements Entity {
   private gridX: number;
@@ -8,14 +9,14 @@ export class Player implements Entity {
   private gridHeight: number;
   private isMoving: boolean = false;
   private moveProgress: number = 0;
-  private moveSpeed: number = 5; // tiles per second
+  private moveSpeed: number = MOVE_SPEED;
   private targetGridX: number;
   private targetGridY: number;
   private previousGridX: number;
   private previousGridY: number;
   private isFalling: boolean = false;
   private fallProgress: number = 0;
-  private fallSpeed: number = 1.5; // duration in seconds for fall animation
+  private fallSpeed: number = FALL_SPEED;
   private fallingSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private filesCollected: number = 0;
