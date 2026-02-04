@@ -4,16 +4,15 @@ import { S3Bucket } from './entities/s3Bucket';
 import { Hole } from './entities/hole';
 import { Goal } from './entities/goal';
 import { InputHandler } from './input';
-import { LEVELS, LevelData } from './levels';
+import { LEVELS } from './levels';
 import { Wall } from './entities/wall';
 import { StepFunctions } from './entities/stepFunctions';
 import { SteppingStone } from './entities/steppingStone';
 import { PaperFile } from './entities/paperFile';
 import { Inventory } from './inventory';
 import { CollisionManager } from './collisionManager';
-import { EntityType } from './entities/entity';
 import { AudioManager } from './audioManager';
-import { MOVE_SPEED } from './constants';
+import { MovementManager } from './movementManager';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -30,6 +29,7 @@ export class Game {
   private files: PaperFile[];
   private inputHandler: InputHandler;
   private collisionManager: CollisionManager;
+  private movementManager: MovementManager;
   private lastFrameTime: number = 0;
   private isGameWon: boolean = false;
   private isGameOver: boolean = false;
@@ -80,6 +80,14 @@ export class Game {
 
     // Initialize collision manager
     this.collisionManager = new CollisionManager();
+
+    // Initialize movement manager
+    this.movementManager = new MovementManager(
+      this.collisionManager,
+      this.audioManager,
+      12, // Default grid width, will be updated by loadLevel
+      10  // Default grid height, will be updated by loadLevel
+    );
 
     this.inputHandler = new InputHandler(this);
 
@@ -151,133 +159,7 @@ export class Game {
       return false;
     }
 
-    // Don't allow movement if player is already moving
-    if (this.player.isCurrentlyMoving()) {
-      return false;
-    }
-
-    // Use collision manager to check if player can move
-    const moveCheck = this.collisionManager.canPlayerMoveTo(this.player, newX, newY);
-
-    if (!moveCheck.canMove) {
-      // Handle different rejection reasons
-      if (moveCheck.reason === 'wall') {
-        this.audioManager.playInvalidMove();
-        return false;
-      }
-
-      if (moveCheck.reason === 'deposit_file' && moveCheck.needsPush) {
-        // Deposit a file into the bucket
-        const bucket = moveCheck.needsPush as S3Bucket;
-        if (this.player.depositFile()) {
-          bucket.addFile();
-        }
-        return false; // Don't move player when depositing
-      }
-
-      if (moveCheck.reason === 'push_bucket' && moveCheck.needsPush) {
-        // Try to push the bucket
-        const bucket = moveCheck.needsPush as S3Bucket;
-        const dx = newX - this.player.getGridX();
-        const dy = newY - this.player.getGridY();
-
-        if (this.tryPushs3Bucket(bucket, dx, dy)) {
-          // Bucket was pushed successfully, move player
-          this.player.moveTo(newX, newY);
-          return true;
-        } else {
-          this.invalidMoveSound.currentTime = 0;
-          this.invalidMoveSound.play();
-          return false;
-        }
-      }
-
-      if (moveCheck.reason === 'unpushable_bucket') {
-        this.audioManager.playInvalidMove();
-        return false;
-      }
-
-      // Other blocking reasons
-      this.audioManager.playInvalidMove();
-      return false;
-    }
-
-    // We play this sound here instead of in the player because I don't want this to sound if block is pushed
-    this.audioManager.playPlayerMove();
-
-    // Check for step functions to activate
-    const stepFunctionAtTarget = this.collisionManager.getEntityAt<StepFunctions>(
-      newX,
-      newY,
-      EntityType.STEP_FUNCTIONS
-    );
-
-    if (stepFunctionAtTarget && stepFunctionAtTarget.isConsumable()) {
-      stepFunctionAtTarget.consume();
-      // Activate all stepping stones
-      this.steppingStones.forEach(stone => stone.activate());
-    }
-
-    // Check for files to collect
-    const fileAtTarget = this.collisionManager.getEntityAt<PaperFile>(
-      newX,
-      newY,
-      EntityType.PAPER_FILE
-    );
-
-    if (fileAtTarget && fileAtTarget.isConsumable()) {
-      fileAtTarget.consume();
-      this.player.collectFile();
-    }
-
-    // Move player
-    this.player.moveTo(newX, newY);
-    return true;
-  }
-
-  private tryPushs3Bucket(s3Bucket: S3Bucket, dx: number, dy: number): boolean {
-    // Don't push if s3Bucket is already moving
-    if (s3Bucket.isCurrentlyMoving()) {
-      return false;
-    }
-
-    if (!s3Bucket.isFull()) {
-      return false;
-    }
-
-    const news3BucketX = s3Bucket.getGridX() + dx;
-    const news3BucketY = s3Bucket.getGridY() + dy;
-
-    // Check bounds
-    if (
-      news3BucketX < 0 ||
-      news3BucketX >= this.grid.getWidth() ||
-      news3BucketY < 0 ||
-      news3BucketY >= this.grid.getHeight()
-    ) {
-      this.audioManager.playInvalidMove();
-      return false;
-    }
-
-    // Use collision manager to check if bucket can be pushed to new position
-    if (!this.collisionManager.canPushEntityTo(s3Bucket, news3BucketX, news3BucketY)) {
-      this.audioManager.playInvalidMove();
-      return false;
-    }
-
-    // Move the bucket
-    s3Bucket.moveTo(news3BucketX, news3BucketY);
-
-    // Check if the bucket would fall into a hole
-    if (this.collisionManager.wouldFallIntoHole(news3BucketX, news3BucketY)) {
-      // Calculate approximate movement duration based on move speed
-      const movementDuration = (1 / MOVE_SPEED) * 1000;
-      setTimeout(() => {
-        s3Bucket.startFalling();
-      }, movementDuration);
-    }
-
-    return true;
+    return this.movementManager.tryMovePlayer(this.player, newX, newY);
   }
 
   getPlayer(): Player {
@@ -446,6 +328,10 @@ export class Game {
     this.stepFunctions.forEach(sf => this.collisionManager.registerEntity(sf));
     this.files.forEach(file => this.collisionManager.registerEntity(file));
     this.goals.forEach(goal => this.collisionManager.registerEntity(goal));
+
+    // Update movement manager with new level dimensions and entities
+    this.movementManager.setGridDimensions(levelData.gridWidth, levelData.gridHeight);
+    this.movementManager.setSteppingStones(this.steppingStones);
 
     // Update level text
     this.levelText.textContent = levelData.levelText || '';
