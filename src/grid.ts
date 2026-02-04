@@ -2,64 +2,37 @@ export class Grid {
   private width: number;
   private height: number;
   private tileSize: number;
+  private floorImage: HTMLImageElement;
+  private imageLoaded: boolean = false;
 
   constructor(width: number, height: number, tileSize: number) {
     this.width = width;
     this.height = height;
     this.tileSize = tileSize;
+
+    // Load floor image
+    this.floorImage = new Image();
+    this.floorImage.onload = () => {
+      this.imageLoaded = true;
+    };
+    this.floorImage.src = 'src/assets/floor.png';
   }
 
   render(ctx: CanvasRenderingContext2D): void {
-    // Draw checkerboard pattern for better visibility
-    // Light tile color - soft warm gray
-    ctx.fillStyle = '#3e3e42';
+    // Draw floor tiles
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        if ((x + y) % 2 === 0) {
-          ctx.fillRect(x * this.tileSize, y * this.tileSize, this.tileSize, this.tileSize);
+        const pixelX = x * this.tileSize;
+        const pixelY = y * this.tileSize;
+
+        if (this.imageLoaded) {
+          ctx.drawImage(this.floorImage, pixelX, pixelY, this.tileSize, this.tileSize);
+        } else {
+          // Fallback color while image loads
+          ctx.fillStyle = '#3e3e42';
+          ctx.fillRect(pixelX, pixelY, this.tileSize, this.tileSize);
         }
       }
-    }
-
-    // Draw grid lines - subtle borders
-    ctx.strokeStyle = '#1e1e20';
-    ctx.lineWidth = 1;
-
-    // Vertical lines
-    for (let x = 0; x <= this.width; x++) {
-      const pixelX = x * this.tileSize;
-      ctx.beginPath();
-      ctx.moveTo(pixelX, 0);
-      ctx.lineTo(pixelX, this.height * this.tileSize);
-      ctx.stroke();
-    }
-
-    // Horizontal lines
-    for (let y = 0; y <= this.height; y++) {
-      const pixelY = y * this.tileSize;
-      ctx.beginPath();
-      ctx.moveTo(0, pixelY);
-      ctx.lineTo(this.width * this.tileSize, pixelY);
-      ctx.stroke();
-    }
-
-    // Draw coordinate numbers
-    ctx.fillStyle = '#888888';
-    ctx.font = '10px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-
-    // Draw X coordinates (column numbers) at top
-    for (let x = 0; x < this.width; x++) {
-      const pixelX = x * this.tileSize + this.tileSize / 2;
-      ctx.fillText(x.toString(), pixelX, 8);
-    }
-
-    // Draw Y coordinates (row numbers) on left
-    ctx.textAlign = 'left';
-    for (let y = 0; y < this.height; y++) {
-      const pixelY = y * this.tileSize + this.tileSize / 2;
-      ctx.fillText(y.toString(), 2, pixelY);
     }
   }
 

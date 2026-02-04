@@ -8,7 +8,7 @@ export class S3Bucket implements Entity {
   private gridHeight: number;
   private isMoving: boolean = false;
   private moveProgress: number = 0;
-  private moveSpeed: number = 8; // tiles per second
+  private moveSpeed: number = 3; // tiles per second
   private targetGridX: number;
   private targetGridY: number;
   private previousGridX: number;

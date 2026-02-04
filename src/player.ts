@@ -54,7 +54,7 @@ export class Player implements Entity {
     this.sprite.onload = () => {
       this.spriteLoaded = true;
     };
-    this.sprite.src = 'src/assets/Nimbo/NimboStand.png';
+    this.sprite.src = 'src/assets/Nimbo/Nimbof.png';
 
     // Load walk animation frames
     for (let i = 1; i <= this.totalWalkFrames; i++) {
@@ -145,8 +145,15 @@ export class Player implements Entity {
 
     if (this.isMoving && this.walkFramesLoaded === this.totalWalkFrames) {
       // Use walk animation when moving
-      const frameIndex = Math.floor(this.walkAnimationTime / this.walkFrameDuration) % this.totalWalkFrames;
-      ctx.drawImage(this.walkFrames[frameIndex], pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+      const frameIndex =
+        Math.floor(this.walkAnimationTime / this.walkFrameDuration) % this.totalWalkFrames;
+      ctx.drawImage(
+        this.walkFrames[frameIndex],
+        pixelX + padding,
+        pixelY + padding,
+        spriteSize,
+        spriteSize
+      );
     } else if (this.spriteLoaded) {
       // Use standing sprite when not moving
       ctx.drawImage(this.sprite, pixelX + padding, pixelY + padding, spriteSize, spriteSize);

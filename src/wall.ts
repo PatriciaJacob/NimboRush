@@ -12,12 +12,15 @@ export class Wall implements Entity {
     this.gridY = gridY;
     this.tileSize = tileSize;
 
-    // Load S3 icon
+    // Randomly select wall image: 70% shelves, 30% boxes
     this.wallIcon = new Image();
     this.wallIcon.onload = () => {
       this.iconLoaded = true;
     };
-    this.wallIcon.src = 'src/icons/cabinet.png';
+    const imagePath = Math.random() < 0.7
+      ? 'src/assets/Walls/shelves.png'
+      : 'src/assets/Walls/boxes.png';
+    this.wallIcon.src = imagePath;
   }
 
   render(ctx: CanvasRenderingContext2D): void {
