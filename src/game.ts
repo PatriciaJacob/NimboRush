@@ -68,9 +68,9 @@ export class Game {
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
     // Load sounds
-    this.levelCompleteSound = new Audio('src/sounds/correct_answer_toy_bi-bling-476370.mp3');
-    this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
-    this.playerMoveSound = new Audio('src/sounds/snow-step-1-81064.mp3');
+    this.levelCompleteSound = new Audio('src/assets/sounds/correct_answer_toy_bi-bling-476370.mp3');
+    this.invalidMoveSound = new Audio('src/assets/sounds/wood-step-sample-1-47664.mp3');
+    this.playerMoveSound = new Audio('src/assets/sounds/snow-step-1-81064.mp3');
     this.playerMoveSound.playbackRate = 2;
 
     // Initialize collision manager
@@ -217,7 +217,11 @@ export class Game {
     }
 
     // Check for files to collect
-    const fileAtTarget = this.collisionManager.getEntityAt<PaperFile>(newX, newY, EntityType.PAPER_FILE);
+    const fileAtTarget = this.collisionManager.getEntityAt<PaperFile>(
+      newX,
+      newY,
+      EntityType.PAPER_FILE
+    );
 
     if (fileAtTarget && fileAtTarget.isConsumable()) {
       fileAtTarget.consume();

@@ -17,9 +17,10 @@ export class Wall implements Entity {
     this.wallIcon.onload = () => {
       this.iconLoaded = true;
     };
-    const imagePath = Math.random() < 0.7
-      ? 'src/assets/Walls/shelves.png'
-      : 'src/assets/Walls/boxes.png';
+    const imagePath =
+      Math.random() < 0.7
+        ? 'src/assets/images/Walls/shelves.png'
+        : 'src/assets/images/Walls/boxes.png';
     this.wallIcon.src = imagePath;
   }
 

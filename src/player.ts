@@ -45,16 +45,16 @@ export class Player implements Entity {
     this.previousGridY = gridY;
 
     // Load falling sound
-    this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
+    this.fallingSound = new Audio('src/assets/sounds/falling-bomb-41038.mp3');
     this.fallingSound.playbackRate = 2;
-    this.invalidMoveSound = new Audio('src/sounds/wood-step-sample-1-47664.mp3');
+    this.invalidMoveSound = new Audio('src/assets/sounds/wood-step-sample-1-47664.mp3');
 
     // Load player sprite
     this.sprite = new Image();
     this.sprite.onload = () => {
       this.spriteLoaded = true;
     };
-    this.sprite.src = 'src/assets/Nimbo/Nimbof.png';
+    this.sprite.src = 'src/assets/images/Nimbo/Nimbof.png';
 
     // Load walk animation frames
     for (let i = 1; i <= this.totalWalkFrames; i++) {
@@ -62,7 +62,7 @@ export class Player implements Entity {
       frame.onload = () => {
         this.walkFramesLoaded++;
       };
-      frame.src = `src/assets/Nimbo/NimboWalk/Nimbo - - ${i}.png`;
+      frame.src = `src/assets/images/Nimbo/NimboWalk/Nimbo - - ${i}.png`;
       this.walkFrames.push(frame);
     }
   }

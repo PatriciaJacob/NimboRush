@@ -15,7 +15,7 @@ export class Grid {
     this.floorImage.onload = () => {
       this.imageLoaded = true;
     };
-    this.floorImage.src = 'src/assets/floor.png';
+    this.floorImage.src = 'src/assets/images/floor.png';
   }
 
   render(ctx: CanvasRenderingContext2D): void {

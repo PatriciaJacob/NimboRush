@@ -18,8 +18,8 @@ export class PaperFile implements Entity {
     this.fileIcon.onload = () => {
       this.iconLoaded = true;
     };
-    this.fileIcon.src = 'src/icons/paper.png';
-    this.pickUpSound = new Audio('src/sounds/paper-rustle-81855.mp3');
+    this.fileIcon.src = 'src/assets/images/icons/paper.png';
+    this.pickUpSound = new Audio('src/assets/sounds/paper-rustle-81855.mp3');
     this.pickUpSound.playbackRate = 5;
   }
 

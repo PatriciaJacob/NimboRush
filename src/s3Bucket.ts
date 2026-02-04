@@ -43,11 +43,11 @@ export class S3Bucket implements Entity {
     this.previousGridX = gridX;
     this.previousGridY = gridY;
 
-    this.moveSound = new Audio('src/sounds/moving-with-table-105076.mp3');
+    this.moveSound = new Audio('src/assets/sounds/moving-with-table-105076.mp3');
     this.moveSound.playbackRate = 3;
-    this.fallingSound = new Audio('src/sounds/falling-bomb-41038.mp3');
+    this.fallingSound = new Audio('src/assets/sounds/falling-bomb-41038.mp3');
     this.fallingSound.playbackRate = 2;
-    this.fillSound = new Audio('src/sounds/paper-rustle-81855.mp3');
+    this.fillSound = new Audio('src/assets/sounds/paper-rustle-81855.mp3');
     this.fillSound.playbackRate = 5;
 
     // Load S3 icon
@@ -55,7 +55,7 @@ export class S3Bucket implements Entity {
     this.s3Icon.onload = () => {
       this.iconLoaded = true;
     };
-    this.s3Icon.src = 'src/icons/s3.svg';
+    this.s3Icon.src = 'src/assets/images/icons/s3.svg';
   }
 
   update(deltaTime: number): void {

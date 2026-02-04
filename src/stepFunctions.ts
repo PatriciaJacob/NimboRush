@@ -18,8 +18,8 @@ export class StepFunctions implements Entity {
     this.stepFunctionsIcon.onload = () => {
       this.iconLoaded = true;
     };
-    this.stepFunctionsIcon.src = 'src/icons/stepFunctions.svg';
-    this.powerUpSound = new Audio('src/sounds/power-up-type-1-230548.mp3');
+    this.stepFunctionsIcon.src = 'src/assets/images/icons/stepFunctions.svg';
+    this.powerUpSound = new Audio('src/assets/sounds/power-up-type-1-230548.mp3');
   }
 
   consume(): void {
