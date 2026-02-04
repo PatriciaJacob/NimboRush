@@ -2,7 +2,7 @@ import { Grid } from './grid';
 import { Player } from './entities/player';
 import { S3Bucket } from './entities/s3Bucket';
 import { Hole } from './entities/hole';
-import { Goal } from './goal';
+import { Goal } from './entities/goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
 import { Wall } from './entities/wall';
