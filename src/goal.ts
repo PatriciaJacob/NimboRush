@@ -1,4 +1,4 @@
-import { Entity, EntityType } from './entity';
+import { Entity, EntityType } from './entities/entity';
 
 export type GoalType = 's3bucket' | 'player';
 

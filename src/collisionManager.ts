@@ -1,6 +1,6 @@
-import { Entity, EntityType } from './entity';
-import { S3Bucket } from './s3Bucket';
-import { Player } from './player';
+import { Entity, EntityType } from './entities/entity';
+import { S3Bucket } from './entities/s3Bucket';
+import { Player } from './entities/player';
 
 export class CollisionManager {
   private entities: Map<EntityType, Entity[]> = new Map();

@@ -1,17 +1,17 @@
 import { Grid } from './grid';
-import { Player } from './player';
-import { S3Bucket } from './s3Bucket';
-import { Hole } from './hole';
+import { Player } from './entities/player';
+import { S3Bucket } from './entities/s3Bucket';
+import { Hole } from './entities/hole';
 import { Goal } from './goal';
 import { InputHandler } from './input';
 import { LEVELS, LevelData } from './levels';
-import { Wall } from './wall';
-import { StepFunctions } from './stepFunctions';
-import { SteppingStone } from './steppingStone';
-import { PaperFile } from './paperFile';
+import { Wall } from './entities/wall';
+import { StepFunctions } from './entities/stepFunctions';
+import { SteppingStone } from './entities/steppingStone';
+import { PaperFile } from './entities/paperFile';
 import { Inventory } from './inventory';
 import { CollisionManager } from './collisionManager';
-import { EntityType } from './entity';
+import { EntityType } from './entities/entity';
 
 export class Game {
   private canvas: HTMLCanvasElement;
