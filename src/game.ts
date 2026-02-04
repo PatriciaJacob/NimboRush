@@ -18,7 +18,7 @@ export class Game {
   private canvas: HTMLCanvasElement;
   private ctx: CanvasRenderingContext2D;
   private grid: Grid;
-  private inventory: Inventory;
+  private inventory: Inventory | null;
   private player: Player;
   private s3Buckets: S3Bucket[];
   private stepFunctions: StepFunctions[];
@@ -72,7 +72,7 @@ export class Game {
     this.walls = [];
     this.files = [];
     this.grid = new Grid(12, 10, this.tileSize); // Default grid, will be updated
-    this.inventory = new Inventory(12, this.tileSize, 10); // Default, will be updated
+    this.inventory = null; // Will be created if level has files
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
     // Initialize audio manager
@@ -150,8 +150,10 @@ export class Game {
     // Render player
     this.player.render(this.ctx);
 
-    // Render inventory
-    this.inventory.render(this.ctx, this.player.getFilesCollected());
+    // Render inventory (only if level has files)
+    if (this.inventory) {
+      this.inventory.render(this.ctx, this.player.getFilesCollected());
+    }
   }
 
   tryMovePlayer(newX: number, newY: number): boolean {
@@ -265,12 +267,16 @@ export class Game {
     this.currentLevelIndex = levelIndex;
     this.isGameWon = false;
 
-    // Recreate inventory
-    this.inventory = new Inventory(levelData.gridWidth, this.tileSize, levelData.gridHeight);
+    // Only create inventory if level has files
+    const hasFiles = levelData.files && levelData.files.length > 0;
+    this.inventory = hasFiles
+      ? new Inventory(levelData.gridWidth, this.tileSize, levelData.gridHeight)
+      : null;
 
-    // Update canvas size based on level (including inventory space)
+    // Update canvas size based on level (include inventory space only if level has files)
+    const inventoryHeight = this.inventory ? this.inventory.getHeight() : 0;
     this.canvas.width = levelData.gridWidth * this.tileSize;
-    this.canvas.height = levelData.gridHeight * this.tileSize + this.inventory.getHeight();
+    this.canvas.height = levelData.gridHeight * this.tileSize + inventoryHeight;
 
     // Recreate grid
     this.grid = new Grid(levelData.gridWidth, levelData.gridHeight, this.tileSize);
