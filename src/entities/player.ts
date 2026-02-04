@@ -8,7 +8,7 @@ export class Player implements Entity {
   private gridHeight: number;
   private isMoving: boolean = false;
   private moveProgress: number = 0;
-  private moveSpeed: number = 3; // tiles per second
+  private moveSpeed: number = 5; // tiles per second
   private targetGridX: number;
   private targetGridY: number;
   private previousGridX: number;
@@ -19,11 +19,11 @@ export class Player implements Entity {
   private fallingSound: HTMLAudioElement;
   private invalidMoveSound: HTMLAudioElement;
   private filesCollected: number = 0;
-  private sprite: HTMLImageElement;
-  private spriteLoaded: boolean = false;
+  private spriteRight: HTMLImageElement;
+  private facingRight: boolean = true;
   private walkFrames: HTMLImageElement[] = [];
   private walkFramesLoaded: number = 0;
-  private readonly totalWalkFrames: number = 10;
+  private readonly totalWalkFrames: number = 5;
   private walkAnimationTime: number = 0;
   private readonly walkFrameDuration: number = 33; // milliseconds per frame (~10 frames in 333ms movement)
 
@@ -49,12 +49,9 @@ export class Player implements Entity {
     this.fallingSound.playbackRate = 2;
     this.invalidMoveSound = new Audio('src/assets/sounds/wood-step-sample-1-47664.mp3');
 
-    // Load player sprite
-    this.sprite = new Image();
-    this.sprite.onload = () => {
-      this.spriteLoaded = true;
-    };
-    this.sprite.src = 'src/assets/images/Nimbo/Nimbof.png';
+    // Load player sprites (left and right facing)
+    this.spriteRight = new Image();
+    this.spriteRight.src = 'src/assets/images/Nimbo/NimboWalk/Nimbof - 1.png';
 
     // Load walk animation frames
     for (let i = 1; i <= this.totalWalkFrames; i++) {
@@ -62,7 +59,8 @@ export class Player implements Entity {
       frame.onload = () => {
         this.walkFramesLoaded++;
       };
-      frame.src = `src/assets/images/Nimbo/NimboWalk/Nimbo - - ${i}.png`;
+
+      frame.src = `src/assets/images/Nimbo/NimboWalk/Nimbof - ${i}.png`;
       this.walkFrames.push(frame);
     }
   }
@@ -147,6 +145,15 @@ export class Player implements Entity {
       // Use walk animation when moving
       const frameIndex =
         Math.floor(this.walkAnimationTime / this.walkFrameDuration) % this.totalWalkFrames;
+
+      if (!this.facingRight) {
+        // Flip horizontally for left-facing walk
+        const centerX = pixelX + padding + spriteSize / 2;
+        ctx.translate(centerX, 0);
+        ctx.scale(-1, 1);
+        ctx.translate(-centerX, 0);
+      }
+
       ctx.drawImage(
         this.walkFrames[frameIndex],
         pixelX + padding,
@@ -154,13 +161,16 @@ export class Player implements Entity {
         spriteSize,
         spriteSize
       );
-    } else if (this.spriteLoaded) {
-      // Use standing sprite when not moving
-      ctx.drawImage(this.sprite, pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+    } else if (!this.facingRight) {
+      // Flip horizontally for left-facing idle
+      const centerX = pixelX + padding + spriteSize / 2;
+      ctx.translate(centerX, 0);
+      ctx.scale(-1, 1);
+      ctx.translate(-centerX, 0);
+      ctx.drawImage(this.spriteRight, pixelX + padding, pixelY + padding, spriteSize, spriteSize);
     } else {
-      // Fallback: draw purple square while sprites are loading
-      ctx.fillStyle = '#665CD2';
-      ctx.fillRect(pixelX + padding, pixelY + padding, spriteSize, spriteSize);
+      // Default: show right-facing sprite
+      ctx.drawImage(this.spriteRight, pixelX + padding, pixelY + padding, spriteSize, spriteSize);
     }
 
     // Restore context state
@@ -178,6 +188,13 @@ export class Player implements Entity {
       this.invalidMoveSound.currentTime = 0; // Reset to start in case it was already playing
       this.invalidMoveSound.play();
       return;
+    }
+
+    // Update facing direction based on horizontal movement
+    if (gridX > this.gridX) {
+      this.facingRight = true;
+    } else if (gridX < this.gridX) {
+      this.facingRight = false;
     }
 
     this.previousGridX = this.gridX;
