@@ -12,6 +12,7 @@ import { PaperFile } from './entities/paperFile';
 import { Inventory } from './inventory';
 import { CollisionManager } from './collisionManager';
 import { EntityType } from './entities/entity';
+import { AudioManager } from './audioManager';
 
 export class Game {
   private canvas: HTMLCanvasElement;
@@ -32,13 +33,9 @@ export class Game {
   private isGameWon: boolean = false;
   private isGameOver: boolean = false;
   private isPaused: boolean = false;
-  private isMuted: boolean = false;
   private currentLevelIndex: number = 0;
   private tileSize: number = 48;
-  private levelCompleteSound: HTMLAudioElement;
-  private invalidMoveSound: HTMLAudioElement;
-  private playerMoveSound: HTMLAudioElement;
-  private backgroundMusic: HTMLAudioElement;
+  private audioManager: AudioManager;
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
   private messageSubtitle: HTMLElement;
@@ -77,16 +74,8 @@ export class Game {
     this.inventory = new Inventory(12, this.tileSize, 10); // Default, will be updated
     this.player = new Player(0, 0, this.tileSize, 12, 10); // Temporary, will be updated
 
-    // Load sounds
-    this.levelCompleteSound = new Audio('src/assets/sounds/correct_answer_toy_bi-bling-476370.mp3');
-    this.invalidMoveSound = new Audio('src/assets/sounds/wood-step-sample-1-47664.mp3');
-    this.playerMoveSound = new Audio('src/assets/sounds/snow-step-1-81064.mp3');
-    this.playerMoveSound.playbackRate = 2;
-
-    // Load and setup background music
-    this.backgroundMusic = new Audio('src/assets/sounds/Cardboard Crates & Coffee Breaks.mp3');
-    this.backgroundMusic.loop = true;
-    this.backgroundMusic.volume = 0.3;
+    // Initialize audio manager
+    this.audioManager = new AudioManager();
 
     // Initialize collision manager
     this.collisionManager = new CollisionManager();
@@ -98,18 +87,7 @@ export class Game {
   }
 
   start(): void {
-    // Start background music (browsers require user interaction first)
-    this.backgroundMusic.play().catch(() => {
-      // Auto-play was prevented, will start on first user interaction
-      const startMusic = () => {
-        this.backgroundMusic.play();
-        document.removeEventListener('keydown', startMusic);
-        document.removeEventListener('click', startMusic);
-      };
-      document.addEventListener('keydown', startMusic);
-      document.addEventListener('click', startMusic);
-    });
-
+    this.audioManager.startBackgroundMusic();
     this.gameLoop(0);
   }
 
@@ -183,8 +161,7 @@ export class Game {
     if (!moveCheck.canMove) {
       // Handle different rejection reasons
       if (moveCheck.reason === 'wall') {
-        this.invalidMoveSound.currentTime = 0;
-        this.invalidMoveSound.play();
+        this.audioManager.playInvalidMove();
         return false;
       }
 
@@ -215,20 +192,17 @@ export class Game {
       }
 
       if (moveCheck.reason === 'unpushable_bucket') {
-        this.invalidMoveSound.currentTime = 0;
-        this.invalidMoveSound.play();
+        this.audioManager.playInvalidMove();
         return false;
       }
 
       // Other blocking reasons
-      this.invalidMoveSound.currentTime = 0;
-      this.invalidMoveSound.play();
+      this.audioManager.playInvalidMove();
       return false;
     }
 
-    // Movement is allowed - play sound and handle interactions
-    this.playerMoveSound.currentTime = 0;
-    this.playerMoveSound.play();
+    // We play this sound here instead of in the player because I don't want this to sound if block is pushed
+    this.audioManager.playPlayerMove();
 
     // Check for step functions to activate
     const stepFunctionAtTarget = this.collisionManager.getEntityAt<StepFunctions>(
@@ -280,15 +254,13 @@ export class Game {
       news3BucketY < 0 ||
       news3BucketY >= this.grid.getHeight()
     ) {
-      this.invalidMoveSound.currentTime = 0;
-      this.invalidMoveSound.play();
+      this.audioManager.playInvalidMove();
       return false;
     }
 
     // Use collision manager to check if bucket can be pushed to new position
     if (!this.collisionManager.canPushEntityTo(s3Bucket, news3BucketX, news3BucketY)) {
-      this.invalidMoveSound.currentTime = 0;
-      this.invalidMoveSound.play();
+      this.audioManager.playInvalidMove();
       return false;
     }
 
@@ -344,8 +316,7 @@ export class Game {
     }
 
     if (allGoalsCompleted && !this.isGameWon) {
-      this.levelCompleteSound.currentTime = 0;
-      this.levelCompleteSound.play();
+      this.audioManager.playLevelComplete();
       this.isGameWon = true;
       this.showWinMessage();
       console.log('🎉 You won!');
@@ -524,16 +495,8 @@ export class Game {
   }
 
   toggleMute(): void {
-    this.isMuted = !this.isMuted;
-
-    // Mute/unmute all audio elements
-    this.levelCompleteSound.muted = this.isMuted;
-    this.invalidMoveSound.muted = this.isMuted;
-    this.playerMoveSound.muted = this.isMuted;
-    this.backgroundMusic.muted = this.isMuted;
-
-    // Update button text
-    this.soundToggleBtn.textContent = this.isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+    const isMuted = this.audioManager.toggleMute();
+    this.soundToggleBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
   }
 
   getIsPaused(): boolean {
