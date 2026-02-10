@@ -31,7 +31,7 @@ export const LEVELS: LevelData[] = [
     gridHeight: 1,
     playerStart: { x: 0, y: 0 },
     s3Buckets: [{ x: 2, y: 0 }],
-    levelText: "Let's deploy the S3 bucket by pushing it to the green goal.",
+    levelText: "Let's deploy a S3 bucket by pushing it to the green goal.",
     goals: [{ x: 6, y: 0 }],
   },
   {

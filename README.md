@@ -54,6 +54,10 @@ IAM Roles/Policies - Keys and locks
 Collect IAM role to unlock certain areas or interact with specific objects
 "You need S3:PutObject permission to move buckets in this zone"
 
+### IDEAS
+- Create levels editor and then can import/export into json format that use to load
+- defining behaviours for entities, so not player entity but player is sort of a thing that has x, y and z behaviours 
+
 ## Credits
 
 Sound Effects by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038), [u_o8xh7gwsrj](https://pixabay.com/users/u_o8xh7gwsrj-54433977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476370), [Ribhav Agrawal](https://pixabay.com/users/ribhavagrawal-39286533/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=230548) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)
