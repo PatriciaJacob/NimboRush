@@ -3,8 +3,7 @@
 List of ideas things I want to add to the game
 
 ### Quality of life Improvements
-- Add a key shortcut for music toggle
-- allow user to click out of modal to close it
+
 
 ### My quality of life improvements
 

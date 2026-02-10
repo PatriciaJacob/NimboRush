@@ -33,6 +33,12 @@ export class InputHandler {
       return;
     }
 
+    // Handle mute toggle (always available, even when paused)
+    if (event.key === 'm' || event.key === 'M') {
+      this.game.toggleMute();
+      return;
+    }
+
     // Block other inputs while paused
     if (this.game.getIsPaused()) {
       return;

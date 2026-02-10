@@ -42,7 +42,7 @@ export class Game {
   private messageSubtitle: HTMLElement;
   private levelText: HTMLElement;
   private pauseOverlay: HTMLElement;
-  private soundToggleBtn: HTMLElement;
+  private soundToggleSpan: HTMLElement;
 
   constructor(canvas: HTMLCanvasElement) {
     this.canvas = canvas;
@@ -58,10 +58,10 @@ export class Game {
     this.messageSubtitle = document.getElementById('message-subtitle')!;
     this.levelText = document.getElementById('level-text')!;
     this.pauseOverlay = document.getElementById('pause-overlay')!;
-    this.soundToggleBtn = document.getElementById('sound-toggle')!;
+    this.soundToggleSpan = document.getElementById('sound-toggle')!;
 
     // Setup sound toggle click handler
-    this.soundToggleBtn.addEventListener('click', () => this.toggleMute());
+    this.soundToggleSpan.addEventListener('click', () => this.toggleMute());
 
     // Initialize with empty arrays (will be populated by loadLevel)
     this.s3Buckets = [];
@@ -389,7 +389,7 @@ export class Game {
 
   toggleMute(): void {
     const isMuted = this.audioManager.toggleMute();
-    this.soundToggleBtn.textContent = isMuted ? '🔇 Sound Off' : '🔊 Sound On';
+    this.soundToggleSpan.textContent = isMuted ? 'SOUND OFF' : 'SOUND ON';
   }
 
   getIsPaused(): boolean {
