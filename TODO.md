@@ -7,16 +7,14 @@ List of ideas things I want to add to the game
 - allow user to click out of modal to close it
 
 ### My quality of life improvements
-- Add a level creation tool
+
 
 ### Game Features
 - Add sound effect for start screen choice and selection
 - Add feedback sound for user added s3bucket to deploy place
 
 ### Puzzle game mode
-- Add intermediate difficulty levels
-- add tutorial for filing a bucket
-- add tutorial for step functions
+
 
 ### Adventure game mode
 - Add cloud watch minion
