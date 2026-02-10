@@ -161,6 +161,7 @@ canvas {
   padding: 4px 8px;
   border: 1px solid #4a4a6a;
   border-radius: 3px;
+  line-height: 16px;
 }
 
 .insert-coin {

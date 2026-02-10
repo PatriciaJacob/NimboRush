@@ -5,11 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
     <link rel="stylesheet" href="/src/styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
     <title>NimboRush</title>
   </head>
   <body class="m-0 flex justify-center items-center min-h-screen bg-black font-mono">
     <!-- Start Screen -->
-    <div id="start-overlay" class="fixed inset-0 bg-black z-[1000] flex justify-center items-center">
+    <div
+      id="start-overlay"
+      class="fixed inset-0 bg-black z-[1000] flex justify-center items-center"
+    >
       <div class="arcade-container text-center">
         <!-- Scanlines overlay -->
         <div class="scanlines"></div>
@@ -31,10 +38,10 @@
         <!-- Controls panel (hidden by default) -->
         <div id="controls-panel" class="arcade-controls hidden">
           <div class="control-row">
-            <span class="arcade-key">↑</span>
-            <span class="arcade-key">↓</span>
-            <span class="arcade-key">←</span>
-            <span class="arcade-key">→</span>
+            <span class="arcade-key"><i class="fa-solid fa-arrow-up"></i></span>
+            <span class="arcade-key"><i class="fa-solid fa-arrow-down"></i></span>
+            <span class="arcade-key"><i class="fa-solid fa-arrow-left"></i></span>
+            <span class="arcade-key"><i class="fa-solid fa-arrow-right"></i></span>
             <span class="control-label">MOVE</span>
           </div>
           <div class="control-row">
@@ -50,8 +57,8 @@
         <!-- Bottom instructions -->
         <div class="arcade-footer">
           <span>PRESS</span>
-          <span class="arcade-key-inline">↑</span>
-          <span class="arcade-key-inline">↓</span>
+          <span class="arcade-key-inline"><i class="fa-solid fa-arrow-up"></i></span>
+          <span class="arcade-key-inline"><i class="fa-solid fa-arrow-down"></i></span>
           <span>TO SELECT</span>
           <span class="arcade-key-inline">ENTER</span>
           <span>TO CONFIRM</span>
@@ -60,7 +67,10 @@
     </div>
 
     <!-- Message Overlay (win/game over) -->
-    <div id="message-overlay" class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center">
+    <div
+      id="message-overlay"
+      class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center"
+    >
       <div class="arcade-panel">
         <div class="scanlines"></div>
         <div class="message-title" id="message-title"></div>
@@ -69,14 +79,15 @@
     </div>
 
     <!-- Pause Overlay -->
-    <div id="pause-overlay" class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center">
+    <div
+      id="pause-overlay"
+      class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center"
+    >
       <div class="arcade-panel">
         <div class="scanlines"></div>
         <div class="pause-title">PAUSED</div>
         <div class="pause-menu">
-          <button id="sound-toggle" class="arcade-button">
-            SOUND ON
-          </button>
+          <button id="sound-toggle" class="arcade-button">SOUND ON</button>
         </div>
         <div class="pause-controls">
           <div class="control-row">
@@ -101,10 +112,10 @@
         <canvas id="game-canvas"></canvas>
       </div>
       <div class="game-footer">
-        <span class="arcade-key-inline">←</span>
-        <span class="arcade-key-inline">↑</span>
-        <span class="arcade-key-inline">↓</span>
-        <span class="arcade-key-inline">→</span>
+        <span class="arcade-key-inline"><i class="fa-solid fa-arrow-left"></i></span>
+        <span class="arcade-key-inline"><i class="fa-solid fa-arrow-up"></i></span>
+        <span class="arcade-key-inline"><i class="fa-solid fa-arrow-down"></i></span>
+        <span class="arcade-key-inline"><i class="fa-solid fa-arrow-right"></i></span>
         <span>MOVE</span>
         <span class="arcade-key-inline">R</span>
         <span>RESTART</span>

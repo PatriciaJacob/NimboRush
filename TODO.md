@@ -10,8 +10,7 @@ List of ideas things I want to add to the game
 - Add a level creation tool
 
 ### Game Features
-- Add a start screen
-- Add start screen title
+
 
 ### Puzzle game mode
 - Add intermediate difficulty levels
