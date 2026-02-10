@@ -35,7 +35,7 @@ export class Game {
   private isGameOver: boolean = false;
   private isPaused: boolean = false;
   private currentLevelIndex: number = 0;
-  private tileSize: number = 48;
+  private tileSize: number = 64;
   private audioManager: AudioManager;
   private messageOverlay: HTMLElement;
   private messageTitle: HTMLElement;
@@ -86,7 +86,7 @@ export class Game {
       this.collisionManager,
       this.audioManager,
       12, // Default grid width, will be updated by loadLevel
-      10  // Default grid height, will be updated by loadLevel
+      10 // Default grid height, will be updated by loadLevel
     );
 
     this.inputHandler = new InputHandler(this);
