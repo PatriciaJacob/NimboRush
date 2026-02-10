@@ -10,7 +10,8 @@ List of ideas things I want to add to the game
 - Add a level creation tool
 
 ### Game Features
-
+- Add sound effect for start screen choice and selection
+- Add feedback sound for user added s3bucket to deploy place
 
 ### Puzzle game mode
 - Add intermediate difficulty levels

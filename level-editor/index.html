@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>NimboRush Level Editor</title>
+    <link rel="icon" href="/favicon.png" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header>
+        <h1>NimboRush Level Editor</h1>
+      </header>
+
+      <div class="main-container">
+        <aside class="toolbar">
+          <h2>Tools</h2>
+
+          <div class="tool-section">
+            <h3>Select Tool</h3>
+            <div class="tool-buttons">
+              <button class="tool-btn active" data-tool="player" title="Player Start (P)">
+                <span class="tool-icon player-icon"></span>
+                <span>Player</span>
+              </button>
+              <button class="tool-btn" data-tool="wall" title="Wall (W)">
+                <span class="tool-icon wall-icon"></span>
+                <span>Wall</span>
+              </button>
+              <button class="tool-btn" data-tool="file" title="File (F)">
+                <span class="tool-icon file-icon"></span>
+                <span>File</span>
+              </button>
+              <button class="tool-btn" data-tool="s3bucket" title="S3 Bucket (S)">
+                <span class="tool-icon s3-icon"></span>
+                <span>S3 Bucket</span>
+              </button>
+              <button class="tool-btn" data-tool="hole" title="Hole (H)">
+                <span class="tool-icon hole-icon"></span>
+                <span>Hole</span>
+              </button>
+              <button class="tool-btn" data-tool="goal-s3" title="Goal S3 (G)">
+                <span class="tool-icon goal-s3-icon"></span>
+                <span>Goal (S3)</span>
+              </button>
+              <button class="tool-btn" data-tool="goal-player" title="Goal Player (O)">
+                <span class="tool-icon goal-player-icon"></span>
+                <span>Goal (Player)</span>
+              </button>
+              <button class="tool-btn" data-tool="stepfunction" title="Step Function (T)">
+                <span class="tool-icon stepfunction-icon"></span>
+                <span>Step Func</span>
+              </button>
+              <button class="tool-btn" data-tool="eraser" title="Eraser (E)">
+                <span class="tool-icon eraser-icon"></span>
+                <span>Eraser</span>
+              </button>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>S3 Bucket Capacity</h3>
+            <div class="capacity-control">
+              <label for="s3-capacity">Capacity (0 = unlimited):</label>
+              <input type="number" id="s3-capacity" min="0" max="10" value="0" />
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>Grid Size</h3>
+            <div class="grid-controls">
+              <label>
+                Width:
+                <input type="number" id="grid-width" min="1" max="30" value="10" />
+              </label>
+              <label>
+                Height:
+                <input type="number" id="grid-height" min="1" max="30" value="8" />
+              </label>
+              <button id="resize-grid" class="action-btn">Resize Grid</button>
+            </div>
+          </div>
+
+          <div class="tool-section">
+            <h3>Level Info</h3>
+            <div class="level-info">
+              <label>
+                Level ID:
+                <input type="number" id="level-id" min="1" value="1" />
+              </label>
+              <label>
+                Level Name:
+                <input type="text" id="level-name" value="My Level" />
+              </label>
+              <label>
+                Level Text:
+                <textarea id="level-text" rows="3" placeholder="Optional tutorial/flavor text..."></textarea>
+              </label>
+            </div>
+          </div>
+
+          <div class="tool-section actions">
+            <button id="clear-level" class="action-btn danger">Clear Level</button>
+            <button id="export-json" class="action-btn primary">Export JSON</button>
+          </div>
+        </aside>
+
+        <main class="editor-area">
+          <div class="canvas-container">
+            <canvas id="editor-canvas"></canvas>
+          </div>
+          <div class="instructions">
+            <p><strong>Controls:</strong> Click to place, Right-click to erase, Drag to paint</p>
+            <p><strong>Hotkeys:</strong> P=Player, W=Wall, F=File, S=S3, H=Hole, G=Goal(S3), O=Goal(Player), T=StepFunc, E=Eraser</p>
+          </div>
+        </main>
+      </div>
+
+      <div id="export-modal" class="modal hidden">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2>Exported Level JSON</h2>
+            <button id="close-modal" class="close-btn">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p>Copy this JSON and add it to your <code>levels.ts</code> file:</p>
+            <pre id="json-output"></pre>
+          </div>
+          <div class="modal-footer">
+            <button id="copy-json" class="action-btn primary">Copy to Clipboard</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="editor.ts"></script>
+  </body>
+</html>
