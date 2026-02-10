@@ -11,7 +11,7 @@ List of ideas things I want to add to the game
 
 ### Game Features
 - Add a start screen
-- Add a start screen
+- Add start screen title
 
 ### Puzzle game mode
 - Add intermediate difficulty levels

@@ -4,178 +4,57 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="icon" type="image/png" href="/favicon.png" />
+    <link rel="stylesheet" href="/src/styles.css" />
     <title>NimboRush</title>
-    <style>
-      body {
-        margin: 0;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        min-height: 100vh;
-        background-color: #2c3e50;
-        font-family: monospace;
-      }
-      #game-container {
-        text-align: center;
-      }
-      canvas {
-        border: 3px solid #34495e;
-        background-color: #1a1a1a;
-        image-rendering: pixelated;
-        image-rendering: crisp-edges;
-      }
-      h1 {
-        color: #ecf0f1;
-        margin-bottom: 15px;
-      }
-      #level-text {
-        background-color: #3b536b;
-        color: #ecf0f1;
-        padding: 12px 20px;
-        border-radius: 8px;
-        margin-bottom: 15px;
-        max-width: 500px;
-        margin-left: auto;
-        text-align: start;
-        margin-right: auto;
-        font-size: 14px;
-        line-height: 1.5;
-        border: 2px solid #2c3e50;
-        min-height: 20px;
-      }
-      #level-text:empty {
-        display: none;
-      }
-      .info {
-        color: #95a5a6;
-        margin-top: 10px;
-        font-size: 13px;
-      }
-      #message-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.8);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-      }
-      #message-overlay.show {
-        display: flex;
-      }
-      .message-content {
-        background-color: #34495e;
-        padding: 40px 60px;
-        border-radius: 10px;
-        text-align: center;
-        border: 3px solid #2c3e50;
-      }
-      .message-title {
-        font-size: 48px;
-        font-weight: bold;
-        margin-bottom: 20px;
-      }
-      .message-title.win {
-        color: #2ecc71;
-      }
-      .message-title.game-over {
-        color: #cc5b2e;
-      }
-      .message-subtitle {
-        font-size: 20px;
-        color: #ecf0f1;
-      }
-      #pause-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.85);
-        z-index: 1000;
-        justify-content: center;
-        align-items: center;
-      }
-      #pause-overlay.show {
-        display: flex;
-      }
-      .pause-content {
-        background-color: #34495e;
-        padding: 40px 50px;
-        border-radius: 10px;
-        text-align: center;
-        border: 3px solid #2c3e50;
-        min-width: 280px;
-      }
-      .pause-title {
-        font-size: 36px;
-        font-weight: bold;
-        color: #f39c12;
-        margin-bottom: 25px;
-      }
-      .pause-controls {
-        margin-bottom: 25px;
-      }
-      .pause-btn {
-        background-color: #2c3e50;
-        color: #ecf0f1;
-        border: 2px solid #3b536b;
-        padding: 12px 24px;
-        font-size: 16px;
-        font-family: monospace;
-        cursor: pointer;
-        border-radius: 6px;
-        transition: background-color 0.2s;
-      }
-      .pause-btn:hover {
-        background-color: #3b536b;
-      }
-      .pause-info {
-        color: #95a5a6;
-        font-size: 14px;
-        margin-top: 20px;
-      }
-      .pause-info div {
-        margin: 8px 0;
-      }
-      .key {
-        background-color: #2c3e50;
-        padding: 2px 8px;
-        border-radius: 4px;
-        color: #ecf0f1;
-      }
-    </style>
   </head>
-  <body>
-    <div id="message-overlay">
-      <div class="message-content">
+  <body class="m-0 flex justify-center items-center min-h-screen bg-[#2c3e50] font-mono">
+    <!-- Start Screen -->
+    <div id="start-overlay" class="fixed inset-0 bg-black/90 z-[1000] flex justify-center items-center">
+      <div class="bg-[#34495e] p-12 rounded-xl text-center border-3 border-[#2c3e50] min-w-80">
+        <div class="text-5xl font-bold text-blue-400 mb-4">NimboRush</div>
+        <div class="text-lg text-gray-400 mb-8">A cloud puzzle adventure</div>
+        <button id="start-btn" class="bg-green-600 hover:bg-green-500 text-gray-100 border-none py-4 px-10 text-xl font-mono cursor-pointer rounded-lg transition-colors mb-6">
+          Start Game
+        </button>
+        <div class="text-gray-500 text-sm space-y-2">
+          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Arrow keys</span> to move</div>
+          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">P</span> to pause</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Message Overlay (win/game over) -->
+    <div id="message-overlay" class="hidden fixed inset-0 bg-black/80 z-[1000] justify-center items-center">
+      <div class="bg-[#34495e] px-[60px] py-[40px] rounded-xl text-center border-3 border-[#2c3e50]">
         <div class="message-title" id="message-title"></div>
-        <div class="message-subtitle" id="message-subtitle"></div>
+        <div id="message-subtitle"></div>
       </div>
     </div>
-    <div id="pause-overlay">
-      <div class="pause-content">
-        <div class="pause-title">PAUSED</div>
-        <div class="pause-controls">
-          <button class="pause-btn" id="sound-toggle">🔊 Sound On</button>
+
+    <!-- Pause Overlay -->
+    <div id="pause-overlay" class="hidden fixed inset-0 bg-black/85 z-[1000] justify-center items-center">
+      <div class="bg-[#34495e] py-10 px-12 rounded-xl text-center border-3 border-[#2c3e50] min-w-70">
+        <div class="text-4xl font-bold text-yellow-500 mb-6">PAUSED</div>
+        <div class="mb-6">
+          <button id="sound-toggle" class="bg-[#2c3e50] hover:bg-[#3b536b] text-gray-100 border-2 border-[#3b536b] py-3 px-6 text-base font-mono cursor-pointer rounded-md transition-colors">
+            🔊 Sound On
+          </button>
         </div>
-        <div class="pause-info">
-          <div><span class="key">Esc</span> or <span class="key">P</span> to resume</div>
-          <div><span class="key">R</span> to restart level</div>
-          <div><span class="key">Arrow keys</span> to move</div>
+        <div class="text-gray-400 text-sm space-y-2">
+          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Esc</span> or <span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">P</span> to resume</div>
+          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">R</span> to restart level</div>
+          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Arrow keys</span> to move</div>
         </div>
       </div>
     </div>
-    <div id="game-container">
-      <h1>NimboRush</h1>
-      <h3 id="level-text"></h3>
-      <canvas id="game-canvas"></canvas>
-      <div class="info">Use arrow keys to move Nimbo</div>
-      <div class="info">Press 'r' to restart the level</div>
+
+    <!-- Game Container -->
+    <div id="game-container" class="text-center">
+      <h1 class="text-[2em] font-bold text-[#ecf0f1] mb-4">NimboRush</h1>
+      <h3 id="level-text" class="bg-[#3b536b] text-[#ecf0f1] py-3 px-5 rounded-lg mb-4 max-w-[500px] mx-auto text-left text-[14px] leading-relaxed border-2 border-[#2c3e50] min-h-5 empty:hidden"></h3>
+      <canvas id="game-canvas" class="border-3 border-[#34495e] bg-[#1a1a1a]"></canvas>
+      <div class="text-[#95a5a6] mt-2.5 text-[13px]">Use arrow keys to move Nimbo</div>
+      <div class="text-[#95a5a6] mt-2.5 text-[13px]">Press 'r' to restart the level</div>
     </div>
     <script type="module" src="/src/index.ts"></script>
   </body>
