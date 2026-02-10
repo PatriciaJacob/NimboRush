@@ -9,16 +9,52 @@
   </head>
   <body class="m-0 flex justify-center items-center min-h-screen bg-[#2c3e50] font-mono">
     <!-- Start Screen -->
-    <div id="start-overlay" class="fixed inset-0 bg-black/90 z-[1000] flex justify-center items-center">
-      <div class="bg-[#34495e] p-12 rounded-xl text-center border-3 border-[#2c3e50] min-w-80">
-        <div class="text-5xl font-bold text-blue-400 mb-4">NimboRush</div>
-        <div class="text-lg text-gray-400 mb-8">A cloud puzzle adventure</div>
-        <button id="start-btn" class="bg-green-600 hover:bg-green-500 text-gray-100 border-none py-4 px-10 text-xl font-mono cursor-pointer rounded-lg transition-colors mb-6">
-          Start Game
-        </button>
-        <div class="text-gray-500 text-sm space-y-2">
-          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Arrow keys</span> to move</div>
-          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">P</span> to pause</div>
+    <div id="start-overlay" class="fixed inset-0 bg-black z-[1000] flex justify-center items-center">
+      <div class="arcade-container text-center">
+        <!-- Scanlines overlay -->
+        <div class="scanlines"></div>
+
+        <!-- Title with glow effect -->
+        <div class="arcade-title">NIMBORUSH</div>
+        <div class="arcade-subtitle">- A CLOUD PUZZLE ADVENTURE -</div>
+
+        <!-- Menu items -->
+        <div class="arcade-menu">
+          <div class="arcade-menu-item selected" data-action="start">
+            <span class="menu-arrow">▶</span> START GAME
+          </div>
+          <div class="arcade-menu-item" data-action="controls">
+            <span class="menu-arrow">▶</span> CONTROLS
+          </div>
+        </div>
+
+        <!-- Controls panel (hidden by default) -->
+        <div id="controls-panel" class="arcade-controls hidden">
+          <div class="control-row">
+            <span class="arcade-key">↑</span>
+            <span class="arcade-key">↓</span>
+            <span class="arcade-key">←</span>
+            <span class="arcade-key">→</span>
+            <span class="control-label">MOVE</span>
+          </div>
+          <div class="control-row">
+            <span class="arcade-key">P</span>
+            <span class="control-label">PAUSE</span>
+          </div>
+          <div class="control-row">
+            <span class="arcade-key">R</span>
+            <span class="control-label">RESTART</span>
+          </div>
+        </div>
+
+        <!-- Bottom instructions -->
+        <div class="arcade-footer">
+          <span>PRESS</span>
+          <span class="arcade-key-inline">↑</span>
+          <span class="arcade-key-inline">↓</span>
+          <span>TO SELECT</span>
+          <span class="arcade-key-inline">ENTER</span>
+          <span>TO CONFIRM</span>
         </div>
       </div>
     </div>
