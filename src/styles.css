@@ -283,22 +283,17 @@ canvas {
   font-size: 32px;
   margin-bottom: 20px;
   letter-spacing: 2px;
+  word-spacing: -12px;
 }
 
 .message-title.win {
   color: #00ff00;
-  text-shadow:
-    0 0 10px #00ff00,
-    0 0 20px #00ff00,
-    3px 3px 0 #008800;
+  text-shadow: 3px 3px 0 #008800;
 }
 
 .message-title.game-over {
   color: #ff4444;
-  text-shadow:
-    0 0 10px #ff4444,
-    0 0 20px #ff4444,
-    3px 3px 0 #880000;
+  text-shadow: 3px 3px 0 #880000;
 }
 
 #message-subtitle {
