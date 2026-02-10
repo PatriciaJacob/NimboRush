@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="/src/styles.css" />
     <title>NimboRush</title>
   </head>
-  <body class="m-0 flex justify-center items-center min-h-screen bg-[#2c3e50] font-mono">
+  <body class="m-0 flex justify-center items-center min-h-screen bg-black font-mono">
     <!-- Start Screen -->
     <div id="start-overlay" class="fixed inset-0 bg-black z-[1000] flex justify-center items-center">
       <div class="arcade-container text-center">
@@ -60,37 +60,57 @@
     </div>
 
     <!-- Message Overlay (win/game over) -->
-    <div id="message-overlay" class="hidden fixed inset-0 bg-black/80 z-[1000] justify-center items-center">
-      <div class="bg-[#34495e] px-[60px] py-[40px] rounded-xl text-center border-3 border-[#2c3e50]">
+    <div id="message-overlay" class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center">
+      <div class="arcade-panel">
+        <div class="scanlines"></div>
         <div class="message-title" id="message-title"></div>
         <div id="message-subtitle"></div>
       </div>
     </div>
 
     <!-- Pause Overlay -->
-    <div id="pause-overlay" class="hidden fixed inset-0 bg-black/85 z-[1000] justify-center items-center">
-      <div class="bg-[#34495e] py-10 px-12 rounded-xl text-center border-3 border-[#2c3e50] min-w-70">
-        <div class="text-4xl font-bold text-yellow-500 mb-6">PAUSED</div>
-        <div class="mb-6">
-          <button id="sound-toggle" class="bg-[#2c3e50] hover:bg-[#3b536b] text-gray-100 border-2 border-[#3b536b] py-3 px-6 text-base font-mono cursor-pointer rounded-md transition-colors">
-            🔊 Sound On
+    <div id="pause-overlay" class="hidden fixed inset-0 bg-black/90 z-[1000] justify-center items-center">
+      <div class="arcade-panel">
+        <div class="scanlines"></div>
+        <div class="pause-title">PAUSED</div>
+        <div class="pause-menu">
+          <button id="sound-toggle" class="arcade-button">
+            SOUND ON
           </button>
         </div>
-        <div class="text-gray-400 text-sm space-y-2">
-          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Esc</span> or <span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">P</span> to resume</div>
-          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">R</span> to restart level</div>
-          <div><span class="bg-[#2c3e50] px-2 py-0.5 rounded text-gray-100">Arrow keys</span> to move</div>
+        <div class="pause-controls">
+          <div class="control-row">
+            <span class="arcade-key">ESC</span>
+            <span class="arcade-key">P</span>
+            <span class="control-label">RESUME</span>
+          </div>
+          <div class="control-row">
+            <span class="arcade-key">R</span>
+            <span class="control-label">RESTART</span>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Game Container -->
-    <div id="game-container" class="text-center">
-      <h1 class="text-[2em] font-bold text-[#ecf0f1] mb-4">NimboRush</h1>
-      <h3 id="level-text" class="bg-[#3b536b] text-[#ecf0f1] py-3 px-5 rounded-lg mb-4 max-w-[500px] mx-auto text-left text-[14px] leading-relaxed border-2 border-[#2c3e50] min-h-5 empty:hidden"></h3>
-      <canvas id="game-canvas" class="border-3 border-[#34495e] bg-[#1a1a1a]"></canvas>
-      <div class="text-[#95a5a6] mt-2.5 text-[13px]">Use arrow keys to move Nimbo</div>
-      <div class="text-[#95a5a6] mt-2.5 text-[13px]">Press 'r' to restart the level</div>
+    <div id="game-container" class="game-container text-center">
+      <h1 class="game-title">NIMBORUSH</h1>
+      <div id="level-text" class="level-text"></div>
+      <div class="canvas-wrapper">
+        <div class="scanlines"></div>
+        <canvas id="game-canvas"></canvas>
+      </div>
+      <div class="game-footer">
+        <span class="arcade-key-inline">←</span>
+        <span class="arcade-key-inline">↑</span>
+        <span class="arcade-key-inline">↓</span>
+        <span class="arcade-key-inline">→</span>
+        <span>MOVE</span>
+        <span class="arcade-key-inline">R</span>
+        <span>RESTART</span>
+        <span class="arcade-key-inline">P</span>
+        <span>PAUSE</span>
+      </div>
     </div>
     <script type="module" src="/src/index.ts"></script>
   </body>
