@@ -4,10 +4,14 @@
 
 A pixel art puzzle game starring Nimbus, the LocalStack mascot. Players navigate grid-based levels, deploying S3 buckets. Each AWS service introduces a unique mechanic—Step Functions create literal stepping stones.
 
+### How to run
 
 You can run:
+
 `npm run dev` to run the game locally
+
 `npm run editor` to try out the level editor
+
 Enjoy it!
 ![Nimbo](https://github.com/PatriciaJacob/NimboRush/blob/main/src/assets/images/Nimbo/NimboWalk/Nimbof%20-%201.png "Nimbo")
 
