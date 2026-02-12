@@ -1,9 +1,18 @@
 # NimboRush
 
-A pixel art puzzle game starring Nimbus, the LocalStack mascot. Players navigate grid-based levels, pushing data blocks onto the correct service endpoints. Each AWS service introduces a unique mechanic—Step Functions create literal stepping stones, SQS tiles act as queues, Lambda triggers chain reactions. The first world features a warm data center aesthetic based on AWS services. The second world shifts to an icy Snowflake-themed environment with cold storage mechanics and slippery surfaces.
-The goal: route your data correctly, solve the puzzle, and maybe learn a bit about cloud services along the way.
+![Title Screen](https://github.com/PatriciaJacob/NimboRush/public/title_screen.png "Game title screen")
 
-## Ideas
+A pixel art puzzle game starring Nimbus, the LocalStack mascot. Players navigate grid-based levels, deploying S3 buckets. Each AWS service introduces a unique mechanic—Step Functions create literal stepping stones.
+
+
+You can run:
+`npm run dev` to run the game locally
+`npm run editor` to try out the level editor
+Enjoy it!
+![Nimbo](https://github.com/PatriciaJacob/NimboRush/src/assets/images/Nimbo/NimboWalk/Nimbof - 1.png "Nimbo")
+
+
+<!-- ## Ideas
 
 ** Movement & Navigation **
 Step Functions (as you mentioned) - Creates bridges/steps across gaps
@@ -56,10 +65,8 @@ Collect IAM role to unlock certain areas or interact with specific objects
 
 ### IDEAS
 - Create levels editor and then can import/export into json format that use to load
-- defining behaviours for entities, so not player entity but player is sort of a thing that has x, y and z behaviours 
+- defining behaviours for entities, so not player entity but player is sort of a thing that has x, y and z behaviours  -->
 
 ## Credits
 
 Sound Effects by [freesound_community](https://pixabay.com/users/freesound_community-46691455/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038), [u_o8xh7gwsrj](https://pixabay.com/users/u_o8xh7gwsrj-54433977/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=476370), [Ribhav Agrawal](https://pixabay.com/users/ribhavagrawal-39286533/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=230548) from [Pixabay](https://pixabay.com//?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=41038)
-
-Icons by [Freepik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](https://www.flaticon.com/)

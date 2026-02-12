@@ -17,3 +17,6 @@ List of ideas things I want to add to the game
 
 ### Adventure game mode
 - Add cloud watch minion
+
+### Bugs
+- Entities that have sound effects defined in their class play the sound even when the game is muted, e.g. pushing blocks, hitting grid boundaries, picking up files etc.
